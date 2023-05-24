@@ -391,15 +391,19 @@ function collectSwitchCase(WhilePath, name) {
             if (types.isReturnStatement(consequent)){
                 body = [consequent];
             }else{
-                body = consequent.body;
+                body = consequent.body || [consequent];
             }
             ifNodes[right.value - 1] = body;   //保存整个body，记得生成switchCase节点的时候加上break节点。
-
+            if (!ifNodes[right.value - 1]){
+                debugger
+            }
             if (!types.isIfStatement(alternate)) {
                 ifNodes[right.value] = alternate.body || types.BlockStatement([alternate]).body;  //最后一个else，其实就是上一个else-if 的 test.right的值
 
             }
-            if (ifNodes.at(-1) === undefined || ifNodes.length === 21)debugger
+            if (!ifNodes[right.value]){
+                debugger
+            }
         },
     })
 
@@ -419,7 +423,7 @@ const for2While = {
         scope.crawl()
     }
 };
-// traverse(ast, for2While)
+traverse(ast, for2While)
 
 const IfToSwitchNode = {
     "WhileStatement"(path) {
@@ -435,7 +439,7 @@ const IfToSwitchNode = {
         }
 
         let parent = path.parentPath;
-        if (!types.isFunctionDeclaration(gParent))return;
+        if (!types.isFunctionDeclaration(gParent) && !types.isFunctionExpression(gParent))return;
 
         if (parent.node.body.length !== 2)return;
         let blockBody = parent.node.body;
@@ -453,7 +457,7 @@ const IfToSwitchNode = {
 
         let len = ifNodes.length;
         for (let i = 0; i < len; i++) {
-            if (!types.isReturnStatement){
+            if (!types.isReturnStatement(ifNodes[i])){
                 ifNodes[i].push(types.BreakStatement());  //每一个case最后都加break
             }
             ifNodes[i] = types.SwitchCase(test = types.valueToNode(i), consequent = ifNodes[i]);  //生成SwitchCase节点
@@ -467,8 +471,7 @@ const IfToSwitchNode = {
 }
 
 
-// traverse(ast, IfToSwitchNode);
-
+traverse(ast, IfToSwitchNode);
 
 
 console.timeEnd("处理完毕，耗时");

@@ -43,6 +43,10 @@ let ast = parser.parse(code);
 
 code = generator(ast, opts = {}).code;
 ast = parser.parse(code);
+
+console.time("处理完毕，耗时");
+
+
 const constantFold =
     {
         "BinaryExpression|UnaryExpression"(path) {
@@ -58,7 +62,7 @@ const constantFold =
 
         },
     };
-// traverse(ast, constantFold);
+traverse(ast, constantFold);
 const restoreConstant =
     {
         VariableDeclarator(path) {
@@ -314,15 +318,15 @@ const ConditionTolf2 = {
 
 // 字符串还原
 const str2 = {
-    VariableDeclarator(path) {
-        let {node} = path;
-        let {id, init} = node;
-        if (!types.isLiteral(init)) return;
-        console.log(path.toString());
-    },
+    // VariableDeclarator(path) {
+    //     let {node} = path;
+    //     let {id, init} = node;
+    //     if (!types.isLiteral(init)) return;
+    //     console.log(path.toString());
+    // },
     AssignmentExpression(path) {
         let {node, scope} = path;
-        // if (path.toString().includes("u = 0")) debugger;
+        if (path.toString().includes("Zk = \"Settin\"")) debugger;
         let {left, operator, right} = node;
         if (!types.isIdentifier(left) || operator !== "=" || !types.isStringLiteral(right)) return;
         if (path.parentPath.key === "alternate")return
@@ -332,41 +336,142 @@ const str2 = {
         let varPath = binding.path;
         if (!(types.isIdentifier(varPath.node) || types.isVariableDeclarator(varPath) && varPath.node.init === null))return;
 
-        len = types.isIdentifier(varPath.node) ? 1: 2;
+        let len = types.isIdentifier(varPath.node) ? 1: 2;
         if (binding.constantViolations.length > len) return;
         console.log("Path: ", path.toString())
 
         let setValueCount = 0;
-        if (binding.hasValue)debugger;
+        let constantChangeCount = 0;
         for(const constantViolation of binding.constantViolations){
             // if (types.isAssignmentExpression(constantViolation)){
             //
             // }
-            console.log("constantViolation: ", constantViolation.toString())
-            if (types.isUpdateExpression(constantViolation))return;
-        }
-        for(const referPath of binding.referencePaths){
-            let referParent = referPath.parentPath;
-            if (!types.isAssignmentExpression(referPath) || referPath.node.right.name !== left.name){
+            if (types.isVariableDeclarator(constantViolation) && constantViolation.init === undefined){
                 continue
             }
+            if (types.isUpdateExpression(constantViolation)) {
+                console.warn("RETURN: constantViolation: ", constantViolation.toString())
+                return
+            };
+            constantChangeCount++
+        }
+        if (constantChangeCount > 1) {
+            console.warn("RETURN: constantChangeCount: ", constantChangeCount, path.toString())
+            return
+        };
+        for(const referPath of binding.referencePaths){
+            let referParent = referPath.parentPath;
+            // if (!(types.isAssignmentExpression(referParent) || types.isBinaryExpression(referParent)) || referParent.node.right.name !== left.name){
+            //     continue
+            // }
             console.log("referencePaths: ", referParent.toString());
             referPath.replaceWith(right);
         }
     }
 }
-// traverse(ast, str2)
+traverse(ast, str2)
 
 
-const forIf2Switch = {
+
+function collectSwitchCase(WhilePath, name) {
+    let ifNodes = [];
+
+    WhilePath.traverse({
+        "IfStatement"(path) {//遍历所有的ifStatement;
+            let {test, consequent, alternate} = path.node; //获取子节点
+
+            let {left, operator, right} = test; // 必定是BinaryExpression
+
+            if (!types.isIdentifier(left, {name: name}) || operator != '<' || !types.isNumericLiteral(right)) {//条件过滤
+                return;
+            }
+
+            let value = right.value;
+            let body;
+            if (types.isReturnStatement(consequent)){
+                body = [consequent];
+            }else{
+                body = consequent.body;
+            }
+            ifNodes[right.value - 1] = body;   //保存整个body，记得生成switchCase节点的时候加上break节点。
+
+            if (!types.isIfStatement(alternate)) {
+                ifNodes[right.value] = alternate.body || types.BlockStatement([alternate]).body;  //最后一个else，其实就是上一个else-if 的 test.right的值
+
+            }
+            if (ifNodes.at(-1) === undefined || ifNodes.length === 21)debugger
+        },
+    })
+
+    return ifNodes;
+}
+
+
+const for2While = {
     ForStatement(path){
         let {node, scope} = path;
-        let {test, consequent, alternate} = node;
-
+        let {init, test, update, body} = node;
+        if (init || test || update)return;
+        if (!types.isBlockStatement(body)){
+            body = types.BlockStatement([body])
+        }
+        path.replaceWith(types.WhileStatement(types.NumericLiteral(1), body));
+        scope.crawl()
     }
 };
+// traverse(ast, for2While)
 
-// console.timeEnd("处理完毕，耗时");
+const IfToSwitchNode = {
+    "WhileStatement"(path) {
+        let {test, body} = path.node;
+
+        if (!(types.isNumericLiteral(test, {value: 1})) || body.body.length != 1) {//条件过滤
+            return;
+        }
+
+        let gParent = path.parentPath;
+        while (types.isBlockStatement(gParent)){
+            gParent = gParent.parentPath;
+        }
+
+        let parent = path.parentPath;
+        if (!types.isFunctionDeclaration(gParent))return;
+
+        if (parent.node.body.length !== 2)return;
+        let blockBody = parent.node.body;
+        if (!types.isVariableDeclaration(blockBody[0]) || !types.isWhileStatement(blockBody[1])) {//条件过滤
+            return;
+        }
+
+        if (blockBody[0].declarations.length !== 1)return;
+
+        let switchId = blockBody[0].declarations[0].id;  //变量名
+        let {name} = switchId;
+        let ifNodes = collectSwitchCase(path, name);   //收集case
+
+        if (ifNodes.length === 0) return;   //无case，直接返回。
+
+        let len = ifNodes.length;
+        for (let i = 0; i < len; i++) {
+            if (!types.isReturnStatement){
+                ifNodes[i].push(types.BreakStatement());  //每一个case最后都加break
+            }
+            ifNodes[i] = types.SwitchCase(test = types.valueToNode(i), consequent = ifNodes[i]);  //生成SwitchCase节点
+        }
+
+        let switchNode = types.SwitchStatement(switchId, ifNodes);   //生成SwitchCase节点
+
+        path.node.body.body = [switchNode]; //最后的while节点只有一个Switch Node;
+
+    },
+}
+
+
+// traverse(ast, IfToSwitchNode);
+
+
+
+console.timeEnd("处理完毕，耗时");
 
 
 

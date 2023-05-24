@@ -32,7 +32,7 @@ class Spider(object):
         s = {
             "user-agent": "yuanrenxue.project",
         }
-        with open("js.js") as f:
+        with open("encrypt.js") as f:
             self.js = execjs.compile(f.read())
 
     def main(self):

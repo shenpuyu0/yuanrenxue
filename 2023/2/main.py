@@ -41,7 +41,7 @@ class Spider(object):
         for page in range(1, 6):
             params = self.js.call("getEncrypted", page)
             response = requests.get(url, headers=self.headers, params=params,
-                                    proxies={"https": "http://127.0.0.1:8888"}, verify=False
+                                    # proxies={"https": "http://127.0.0.1:8888"}, verify=False
                                      )
             data = response.json()
             print(data)
@@ -49,13 +49,5 @@ class Spider(object):
         print(sum(nums))
 
 
-# Spider().main()
+Spider().main()
 
-
-def toHex(ls):
-    s = ""
-    for i in ls:
-        s += hex(i).replace("0x", "")
-    print(s)
-
-toHex([121, 117, 197, 86, 29, 245, 54, 41, 251, 162, 82, 44, 196, 106, 100, 146, 81, 164, 228, 235, 15, 50, 144, 131, 213, 142, 53, 201, 114, 5, 51, 146])

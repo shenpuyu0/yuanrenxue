@@ -33,7 +33,7 @@ class Spider(object):
         s = {
             "user-agent": "yuanrenxue.project",
         }
-        with open("js2.js", "r", encoding="UTF-8") as f:
+        with open("js.js", "r", encoding="UTF-8") as f:
             self.js = execjs.compile(f.read())
 
     def main(self):
@@ -46,10 +46,7 @@ class Spider(object):
             # data = {"page":"1","token":"CgTHOrKxHceb56JOiQImipBTTcPFgDuMMHezYx5+Ii5Cwfdv7R8QM4yapgveftPHHl8dJui+6L1lVFZcfHS9EAw+gpJNcCcQrHFkqKoyC4aUc5dC5ldZg5Lm/rK+nn5fhcla38xY/en+5cT8Tr6JFxhMP6GnRRyg80Z4U/xCxqdhCNoloFfSwn0Pd3KgYljvwWUgwVrvDZThK6hP21mrix1tMchRFnWMv295S/E2VeSKHbjq2tTuZ3LzrUXSmllu+EmEkijELkAn4DBfRqdgujaC+qorXFVIe+Pp6B+mEERMeqjOhufUMhqQKE1SXkCWKEXT3W7tEZ21gmh+F91oCw=="}
             # response = tls_client.Session(client_identifier="chrome_106").post(url, headers=self.headers, data=data
             self.headers["accept-time"] = str(int(data["ts"]) - page)
-            response = requests.post(url, headers=self.headers, data=data["data"]
-                                    , proxies={"https": "http://127.0.0.1:8888"}
-                                     , verify=False
-                                     )
+            response = requests.post(url, headers=self.headers, data=data["data"])
             data = response.json()
             print(data)
             nums.extend([dic["value"] for dic in data["data"]])
@@ -65,4 +62,7 @@ def toHex(ls):
         s += hex(i).replace("0x", "")
     print(s)
 
-toHex([121, 117, 197, 86, 29, 245, 54, 41, 251, 162, 82, 44, 196, 106, 100, 146, 81, 164, 228, 235, 15, 50, 144, 131, 213, 142, 53, 201, 114, 5, 51, 146])
+
+toHex(
+    [121, 117, 197, 86, 29, 245, 54, 41, 251, 162, 82, 44, 196, 106, 100, 146, 81, 164, 228, 235, 15, 50, 144, 131, 213,
+     142, 53, 201, 114, 5, 51, 146])

@@ -16,7 +16,7 @@ def logininfo():
     return {}
 @app.route("/match2023/corejs/match3.js")
 def js():
-    with open("./js.js", "r", encoding="UTF-8") as f:
+    with open("./encrypt.js", "r", encoding="UTF-8") as f:
         return f.read()
 
 

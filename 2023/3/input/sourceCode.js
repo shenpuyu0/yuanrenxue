@@ -129,7 +129,6 @@ function ii(l, s, f, n, t, r, a, u) {
                                                     window.openLog = true
                                                 }
                                                 let result = i(l, z, A, n, i, q, this, arguments);
-                                                console.log(result);
                                                 if (result === "635a3a7cb9d03c812d0506d6db39e58367f7c07ff7e4bed6474f34b8154035e9") {
                                                     window.openLog = false
                                                     debugger

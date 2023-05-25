@@ -16,7 +16,7 @@ class Spider(object):
             "user-agent": "yuanrenxue.project",
             "Cookie": "sessionid=yvlnrc0vd8mfhfx9xjydypk8r286o9fo"
         }
-        with open("js.js") as f:
+        with open("encrypt.js") as f:
             self.js =execjs.compile(f.read())
 
     def main(self):

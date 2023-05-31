@@ -27,6 +27,7 @@ class Spider(object):
             "sec-ch-ua-mobile": "?0",
             "sec-ch-ua-platform": "\"Windows\"",
             "sec-fetch-dest": "empty",
+            "Cookie": "Hm_lvt_2a795944b81b391f12d70da5971ba616=1684918579; sessionid=d16u8hrgryjl591med8otgfy3ewov6ml; Hm_lpvt_2a795944b81b391f12d70da5971ba616=1685410554",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
@@ -45,17 +46,10 @@ class Spider(object):
             # data = self.js.call("getEncrypted", page)
             data = {
                 "page": 1,
-                "yt4": "NLAVyBXgbDGRdDkEpZEgzTThtMh8PY21YOBJzL39vCn4vNChtTy8WIEUYDGZ6QkB6XxlbZmIMcF9lI39YSU43GV9nImQlOkFqZARrckRPRyxwKXVcDQUX"
+                "yt4": "oNzlQUHEnQ1UlGSpTch5laFIOTnBWJHh2alAyV317CnFOciQAAx9qWkQvDGZ6QkBtSiEnaHYTAjdzbTFlR303GV9nImQlOkFqZARrckRPRyxwKXVcDQUX"
             }
             print(data)
-            cookies = {
-                "sessionid": "73z7p4h626484lfwvfrzbg6r45wpk4jy"
-            }
-            # data = {"page":"1","token":"BI/ekYVdrEOrMEWMnAVKbYk4lXcATLjfUMEDIwBmGrZQyhQCb9/SEPRddAT9KTLdPSxzyg2nSmpdXnhjPszu5MnzVpgBjArWE3nhNbaq46WZR+M6C7agCmy3n+Nq410r0Y6xRChIhTup5+W85kEi8M5LIOtqA79t9979GqkWmhYty8aRAwSNgcvxYXMmetvgWl49/GLMEB6ZZODQPuxj0wLFraC9xTNM0/T7NwweQbes3A58oy4fQ91ZgngqMosd/uiFwaMgO6JgRa8nNLaGru2tim/qeRyGGODbVo8GhHKTNgrsfQ+YuLRXJrXSnoOY/7IHoGFzbL2e6WVxJ/RaZg=="}
-            # data = {"page":"1","token":"CgTHOrKxHceb56JOiQImipBTTcPFgDuMMHezYx5+Ii5Cwfdv7R8QM4yapgveftPHHl8dJui+6L1lVFZcfHS9EAw+gpJNcCcQrHFkqKoyC4aUc5dC5ldZg5Lm/rK+nn5fhcla38xY/en+5cT8Tr6JFxhMP6GnRRyg80Z4U/xCxqdhCNoloFfSwn0Pd3KgYljvwWUgwVrvDZThK6hP21mrix1tMchRFnWMv295S/E2VeSKHbjq2tTuZ3LzrUXSmllu+EmEkijELkAn4DBfRqdgujaC+qorXFVIe+Pp6B+mEERMeqjOhufUMhqQKE1SXkCWKEXT3W7tEZ21gmh+F91oCw=="}
-            # response = tls_client.Session(client_identifier="chrome_106").post(url, headers=self.headers, data=data
-            # self.headers["accept-time"] = str(int(data["ts"]) - page)
-            response = requests.post(url, headers=self.headers, cookies=cookies, data=data)
+            response = requests.post(url, headers=self.headers, data=data)
             data = response.json()
             print(data)
             nums.extend([dic["value"] for dic in data["data"]])

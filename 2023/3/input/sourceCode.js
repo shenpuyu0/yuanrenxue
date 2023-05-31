@@ -1458,3 +1458,129 @@ function ii(l, s, f, n, t, r, a, u) {
         }
     }
 }
+
+
+{
+
+    _$Ps =[62, 51, 62, 49, 63, 51, 60, 51, 48, 49, 62, 49, 52, 52, 64, 48, 64, 47];
+    _$Qv = _$Ps;
+    _$Yv = _$Qv["length"];
+    _$Yv = _$Yv / 2;
+    _$Ds = _$Yv;
+    _$Zs = [];
+    _$Qv = 0;
+    _$Ks = 0;
+    for (_$zs = 0; _$zs < _$Ds; _$zs++) {
+        _$Qv = _$Ps;
+        _$Wv = _$Ks;
+        _$Yv = _$Ps[_$Ks];
+        _$Ys = _$Yv;
+        _$Qv = _$Ps;
+        _$Wv = _$Ks;
+        _$Yv = 1;
+        _$Ov = _$Ks + 1;
+        _$Pv = _$Qv[_$Ov];
+        _$Us = _$Pv;
+        _$Qv = _$Ks;
+        _$Wv = 2;
+        _$Yv = _$Qv + 2;
+        _$Ks = _$Yv;
+        _$Qv = _$Ys;
+        _$Wv = 46;
+        _$Yv = _$Qv - 46;
+        _$Ys = _$Yv;
+        _$Qv = _$Us;
+        _$Wv = 46;
+        _$Yv = _$Qv - 46;
+        _$Us = _$Yv;
+        _$Qv = _$Us;
+        _$Wv = 19;
+        _$Yv = _$Qv * 19;
+        _$Ov = _$Ys;
+        _$Pv = _$Yv + _$Ov;
+        _$Ws = _$Pv;
+        _$Qv = _$Ws;
+        _$Wv = 11;
+        _$Yv = _$Qv ^ 11;
+        _$Qs = _$Yv;
+        _$Qv = _$Zs;
+        _$Wv = _$zs;
+        _$Yv = _$Qs;
+        _$Qv[_$Wv] = _$Yv;
+    }
+    _$Qv = "";
+    _$Es = _$Qv;
+    for (_$qs = 0; _$qs < _$Zs.length; _$qs++) {
+        _$Qv = _$Zs;
+        _$Wv = _$qs;
+        _$Yv = _$Qv[_$Wv];
+        _$Ov = "toString";
+        _$Pv = 2;
+        _$Gv = _$Yv[_$Ov](_$Pv);
+        _$Rs = _$Gv;
+        _$Qv = _$Rs;
+        _$Wv = "match";
+        _$Yv = /^1+?(?=0)/;
+        _$Ov = _$Qv[_$Wv](_$Yv);
+        _$_s = _$Ov;
+        _$Qv = _$_s;
+        _$Wv = _$Qv;
+        if (_$Wv) {
+            _$ks = _$Rs;
+            _$Ns = "length";
+            _$Hs = _$ks[_$Ns];
+            _$xs = 8;
+            _$Wv = _$Hs === _$xs;
+        }
+        if (_$Wv) {
+            _$Qv = _$_s;
+            _$Wv = 0;
+            _$Yv = _$Qv[_$Wv];
+            _$Ov = "length";
+            _$Pv = _$Yv[_$Ov];
+            _$Ls = _$Pv;
+            _$Qv = _$Zs;
+            _$Wv = _$qs;
+            _$Yv = _$Qv[_$Wv];
+            _$Ov = "toString";
+            _$Pv = 2;
+            _$Gv = _$Yv[_$Ov](_$Pv);
+            _$Zv = "slice";
+            _$Ev = 7;
+            _$_v = _$Ls;
+            _$Vv = _$Ev - _$_v;
+            _$qv = _$Gv[_$Zv](_$Vv);
+            _$Vs = _$qv;
+            for (_$Bs = 0; _$Bs < _$Ls; _$Bs++) {
+                _$Qv = _$Zs;
+                _$Wv = _$Bs;
+                _$Yv = _$qs;
+                _$Ov = _$Wv + _$Yv;
+                _$Pv = _$Qv[_$Ov];
+                _$Gv = "toString";
+                _$Zv = 2;
+                _$Ev = _$Pv[_$Gv](_$Zv);
+                _$_v = "slice";
+                _$Vv = 2;
+                _$qv = _$Ev[_$_v](_$Vv);
+                _$Vs += _$qv;
+            }
+            _$Qv = _$Vs;
+            _$Wv = 2;
+            _$Yv = parseInt(_$Qv, _$Wv);
+            _$Ov = String.fromCharCode(_$Yv);
+            _$Es += _$Ov;
+            _$Qv = _$Ls;
+            _$Wv = 1;
+            _$Yv = _$Qv - _$Wv;
+            _$qs += _$Yv;
+        } else {
+            _$Qv = _$Zs;
+            _$Wv = _$qs;
+            _$Yv = _$Qv[_$Wv];
+            _$Ov = String.fromCharCode(_$Yv);
+            _$Es += _$Ov;
+        }
+    }
+}
+console

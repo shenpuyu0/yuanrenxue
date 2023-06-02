@@ -1,49 +1,77 @@
-!function () {
-    // globalThis.ts = 1685354256844;
-    globalThis.ts = 1661986251253;
-    let getTime = function () {
-        return window.ts || (new Date).valueOf();
-    };
-    let now = function () {
-        return (new Date).getTime()
-    };
-    now.toString = function () {
-        return "function (){try {xhr = new XMLHttpRequest();xhr.open('get', '/api/background.png', false);xhr.send();let systemTime=parseInt(xhr.response);if(Math.abs(systemTime-(new Date).valueOf())>=30000){alert('您好，您的系统时间可能不准确，题目有可能会出现各种异常问题，请您校准系统时间之后再重新做题')};return systemTime} catch (e){return (new Date).valueOf()}}"
-    }
-    Object.defineProperty(Date.prototype, "getTime", {
-        writable: false,
-        enumerable: false,
-        configurable: true,
-        value: getTime
-    })
-    Object.defineProperty(Date, "now", {
-        writable: false,
-        enumerable: false,
-        configurable: true,
-        value: now
-    })
+// !function () {
+//     ;(function(){
+//     // 'use strict';
+//     const $toString = Function.toString
+//     const myFunction_toString_symbol = Symbol('('.concat('', ')_', (Math.random() + '').toString(36)))
+//     const myToString = function () {
+//         return typeof this == 'function' && this[myFunction_toString_symbol] || $toString.call(this)
+//     }
+//
+//     function set_native(func, key, value) {
+//         Object.defineProperty(func, key, {
+//             "enumerable": false,
+//             'configurable': true,
+//             'writable': true,
+//             'value': value
+//         })
+//     }
+//
+//     delete Function.prototype['toString']
+//     // Reflect.deleteProperty(Function.prototype,'toString')
+//     set_native(Function.prototype, 'toString', myToString)
+//     set_native(Function.prototype.toString, myFunction_toString_symbol, 'function toString(){ [native code] }')
+//     globalThis.safefunction = (func) => {
+//         set_native(func, myFunction_toString_symbol, `function ${myFunction_toString_symbol, func.name || ''}() { [native code] }`)
+//     }
+// }).call(this);
+//     delete Buffer
+//     // globalThis.ts = 1685354256844;
+//     globalThis.ts = (new Date).valueOf();
+//     console.log("ts: ", ts);
+//     Math._random = Math.random;
+//     Date.now = function() {
+//         try {
+//             let xhr = new XMLHttpRequest();
+//             xhr.open('get', '/api/background.png', false);
+//             xhr.send();
+//             let systemTime = parseInt(xhr.response);
+//             if (Math.abs(systemTime - (new Date).valueOf()) >= 30000) {
+//                 alert('您好，您的系统时间可能不准确，题目有可能会出现各种异常问题，请您校准系统时间之后再重新做题')
+//             }
+//             console.log("Date.now: ", systemTime, (new Date).valueOf());
+//             return systemTime + Math.floor(math.random() * 100)
+//         } catch (e) {
+//             return (new Date).valueOf()
+//         }
+//     }
+//     Object.defineProperty(Date.prototype, "getTime", {
+//         writable: false,
+//         enumerable: false,
+//         configurable: true,
+//         value: function getTime() {
+//             let ts = (new Date).valueOf();
+//             console.log("Date.prototype.getTime: ", ts);
+//             return ts;
+//             // return window.ts || (new Date).valueOf();
+//         }
+//     })
+//
+//     Math.random = function random() {
+//         return 0.32501634081597675;
+//     };
+// }();
 
-    Math.random = function random() {
-        return 0.08636862211354912;
-    };
-    // Object.defineProperty(document, "cookie", {
-    //     writable: false,
-    //     enumerable: false,
-    //     configurable: true,
-    //     value: "sessionid"
-    // })
-}();
-debugger;
+delete Buffer
 if (typeof window === "undefined") {
     function createProxy(obj, targetTag) {
         return new Proxy(obj, {
             get(target, prop) {
                 console.log("PROXY GET: ", targetTag, prop);
-                if (prop === "plugins")debugger
                 return Reflect.get(...arguments)
             },
             set(target, prop, value) {
-                console.log("PROXY SET: ", targetTag, prop, " ==> ", value);
+                let _value =  value === window ? "WINDOW": value === globalThis ? "GLOBALTHIS" : value;
+                console.log("PROXY SET: ", targetTag, prop, " ==> ", _value);
                 return Reflect.set(...arguments)
             },
         })
@@ -61,7 +89,9 @@ if (typeof window === "undefined") {
     window.toString = function toString(){return '[object Window]'}
     window.top = window;
     window.self = window;
+    window.parent = window;
     let doc = {
+        body:{},
         cookie: 'Hm_lvt_2a795944b81b391f12d70da5971ba616=1685246881; Hm_lpvt_2a795944b81b391f12d70da5971ba616=1685247134',
         addEventListener: function () {
             console.log("document.addEventListener")
@@ -137,7 +167,7 @@ if (typeof window === "undefined") {
     window.document = createProxy(doc, "document")
     window.navigator = createProxy({
         cookieEnable: true,
-        language: "zh-CN",
+        languages: "zh-CN",
         platform: "MacIntel",
         plugins: createProxy({
             length: 5
@@ -148,6 +178,9 @@ if (typeof window === "undefined") {
         href: "https://match2023.yuanrenxue.cn/topic/4"
     }, "location");
     window.onmessage = null;
+    window.alert = function alert(){
+        console.log("CALL alert");
+    };
     window.SpeechSynthesisUtterance = function SpeechSynthesisUtterance() {
         console.log("CALL SpeechSynthesisUtterance");
     }
@@ -187,6 +220,9 @@ if (typeof window === "undefined") {
     window.toString = function toString() {
         console.log("CALL toString");
         return '[object Window]'
+    }
+    window.isFinite = function isFinite(){
+        console.log("CALL isFinite");
     }
     window.OfflineAudioContext = function OfflineAudioContext() {
         console.log("CALL OfflineAudioContext");
@@ -252,15 +288,8 @@ if (typeof window === "undefined") {
     window.outerWidth = 1440;
     window.innerWidth = 1440;
 }
-let debugArray = [];
-// debugArray.push = function () {
-//     console.log("debugArray.push: ", arguments);
-//     return Array.prototype.push.apply(this, arguments)
-// }
 
-
-var _$a;
-_$a = function () {
+!function () {
     var _$lW, _$hW, _$gW, _$uW, _$pW, _$yW, _$wW, _$dW, _$MW,
         _$IW, _$AW, _$SW, _$mW, _$TW, _$jW, _$CW, _$DW, _$KW, _$QW, _$WW, _$YW, _$UW, _$OW, _$PW, _$GW, _$NW, _$ZW,
         _$zW, _$EW, _$RW, _$_W, _$LW, _$VW, _$qW, _$HW, _$xW, _$BW, _$XW, _$FW, _$JW, _$$W, _$aY, _$eY, _$rY, _$cY,
@@ -4883,7 +4912,6 @@ _$a = function () {
     }
 
     function _$vU() {
-        console.log("log _$OW: ", _$OW);
         var _$Qv, _$Wv, _$Yv, _$Uv, _$Ov, _$Pv, _$Gv, _$Nv, _$Zv, _$zv, _$Ev, _$Rv, _$_v, _$Lv, _$Vv, _$qv, _$Hv, _$xv,
             _$Bv, _$Xv, _$Fv, _$Jv, _$$v, _$as, _$es, _$rs, _$cs, _$vs, _$ss, _$ns, _$fs, _$ts, _$is, _$os, _$ks, _$bs,
             _$ls, _$hs, _$gs, _$us, _$ps, _$ys, _$ws, _$ds, _$Ms, _$Is, _$As, _$Ss, _$ms, _$Ts, _$js, _$Cs, _$Ds, _$Ks,
@@ -5573,7 +5601,6 @@ _$a = function () {
             _$Qv = _$VA;
             _$LA = _$Qv;
 
-            console.log(_$VA);
             _$qA = "type";
             _$Qv = "F_";
             _$xA = _$Qv;
@@ -7539,7 +7566,6 @@ _$a = function () {
                 _$VW = _$r;
             };
             _$NA["oncomplete"] = _$Yv;
-            console.log("正常结束")
         }
         _$Qv = 0;
         _$wY = _$Qv;
@@ -7655,7 +7681,7 @@ _$a = function () {
         }
         _$wY++;
         _$Qv = [];
-        _$iY = _$Qv;
+        _$iY = [];
         _$Qv = _$BW;
         _$hj = _$Qv;
         _$Yv = 32;
@@ -7725,8 +7751,7 @@ _$a = function () {
             _$iY["push"](0 | ((_$Yj * (128 - 80)) + 80));
         }
         _$Qv = false;
-        _$Pj = _$Qv;
-        console.log("log 2 _$OW: ", _$OW);
+        _$Pj = false;
         try {
             _$Qv = Close;
             _$Gj = _$Qv;
@@ -8024,7 +8049,7 @@ _$a = function () {
         _$sC = _$Gv;
         _$Qv = _$sC;
         if (_$Qv) {
-            _$Lj = _$sC;
+            _$Lj = _$pW["length"] > 10 ? _$hj["document"] : 0;
         }
         _$Qv = "mGr";
         _$nC = _$Qv;
@@ -8099,20 +8124,19 @@ _$a = function () {
         }
         _$Qv = _$Lj;
         _$Wv = _$Qv;
-        if (_$Wv) {
-            _$ks = _$kC;
-            _$Ns = 50;
-            _$Wv = _$ks > _$Ns;
+        if (_$Lj) {
+            // 检测
+            _$kC = 100;
+            _$Lj = _$kC > 50;
         }
-        _$Lj = _$Wv;
         _$Qv = "8333" + ">3.4";
         _$TC = _$Qv;
         _$Qv = _$TC;
         _$Wv = "length";
-        _$Yv = _$Qv[_$Wv];
+        _$Yv = _$Qv["length"];
         _$lC = _$Yv;
         _$Qv = [];
-        _$jC = _$Qv;
+        _$jC = [];
         for (_$DC = 0; _$DC < _$lC; _$DC++) {
             _$Qv = _$TC;
             _$Wv = "charCodeAt";
@@ -8247,8 +8271,7 @@ _$a = function () {
             }
         }
         _$Qv = _$jC;
-        _$Wv = "length";
-        _$Yv = _$Qv[_$Wv];
+        _$Yv = _$jC["length"];
         _$yC = _$Yv;
         _$Qv = _$yC;
         _$Wv = 2;
@@ -8301,368 +8324,37 @@ _$a = function () {
 
         _$WC = "body";
         _$Qv = _$Lj;
-        _$Wv = _$Qv;
-        if (_$Wv) {
-            _$ks = _$sC;
-            _$Ns = _$WC;
-            _$Wv = _$ks[_$Ns];
+        _$Wv = _$Lj;
+        if (_$Lj) {
+            _$Lj = _$sC["body"];
         }
-        if (_$Wv) {
-            _$Qv = 1;
-            _$Lj = _$Qv;
+        if (_$Lj) {
+            _$Lj = 1;
         } else {
-            _$Qv = 0;
-            _$Lj = _$Qv;
+            _$Lj = 0;
         }
-        _$Qv = "33830" + "3=373;" + "4";
-        _$vD = _$Qv;
-        _$Qv = _$vD;
-        _$Wv = "length";
-        _$Yv = _$Qv[_$Wv];
-        _$XC = _$Yv;
-        _$Qv = [];
-        _$sD = _$Qv;
-        for (_$nD = 0; _$nD < _$XC; _$nD++) {
-            _$Qv = _$vD;
-            _$Wv = "charCodeAt";
-            _$Yv = _$nD;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$FC = _$Ov;
-            _$Qv = _$FC;
-            _$Wv = 65536;
-            _$Yv = _$Qv >= _$Wv;
-            _$Ov = _$Yv;
-            if (_$Ov) {
-                _$ks = _$FC;
-                _$Ns = 1114111;
-                _$Ov = _$ks <= _$Ns;
-            }
-            if (_$Ov) {
-                _$Qv = _$sD;
-                _$Wv = "push";
-                _$Yv = _$FC;
-                _$Ov = 18;
-                _$Pv = _$Yv >> _$Ov;
-                _$Gv = 7;
-                _$Zv = _$Pv & _$Gv;
-                _$Ev = 240;
-                _$_v = _$Zv | _$Ev;
-                _$Qv[_$Wv](_$_v);
-                _$Qv = _$sD;
-                _$Wv = "push";
-                _$Yv = _$FC;
-                _$Ov = 12;
-                _$Pv = _$Yv >> _$Ov;
-                _$Gv = 63;
-                _$Zv = _$Pv & _$Gv;
-                _$Ev = 128;
-                _$_v = _$Zv | _$Ev;
-                _$Qv[_$Wv](_$_v);
-                _$Qv = _$sD;
-                _$Wv = "push";
-                _$Yv = _$FC;
-                _$Ov = 6;
-                _$Pv = _$Yv >> _$Ov;
-                _$Gv = 63;
-                _$Zv = _$Pv & _$Gv;
-                _$Ev = 128;
-                _$_v = _$Zv | _$Ev;
-                _$Qv[_$Wv](_$_v);
-                _$Qv = _$sD;
-                _$Wv = "push";
-                _$Yv = _$FC;
-                _$Ov = 63;
-                _$Pv = _$Yv & _$Ov;
-                _$Gv = 128;
-                _$Zv = _$Pv | _$Gv;
-                _$Qv[_$Wv](_$Zv);
-            } else {
-                _$Qv = _$FC;
-                _$Wv = 2048;
-                _$Yv = _$Qv >= _$Wv;
-                _$Ov = _$Yv;
-                if (_$Ov) {
-                    _$ks = _$FC;
-                    _$Ns = 65535;
-                    _$Ov = _$ks <= _$Ns;
-                }
-                if (_$Ov) {
-                    _$Qv = _$sD;
-                    _$Wv = "push";
-                    _$Yv = _$FC;
-                    _$Ov = 12;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 15;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 224;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$sD;
-                    _$Wv = "push";
-                    _$Yv = _$FC;
-                    _$Ov = 6;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 63;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 128;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$sD;
-                    _$Wv = "push";
-                    _$Yv = _$FC;
-                    _$Ov = 63;
-                    _$Pv = _$Yv & _$Ov;
-                    _$Gv = 128;
-                    _$Zv = _$Pv | _$Gv;
-                    _$Qv[_$Wv](_$Zv);
-                } else {
-                    _$Qv = _$FC;
-                    _$Wv = 128;
-                    _$Yv = _$Qv >= _$Wv;
-                    _$Ov = _$Yv;
-                    if (_$Ov) {
-                        _$ks = _$FC;
-                        _$Ns = 2047;
-                        _$Ov = _$ks <= _$Ns;
-                    }
-                    if (_$Ov) {
-                        _$Qv = _$sD;
-                        _$Wv = "push";
-                        _$Yv = _$FC;
-                        _$Ov = 6;
-                        _$Pv = _$Yv >> _$Ov;
-                        _$Gv = 31;
-                        _$Zv = _$Pv & _$Gv;
-                        _$Ev = 192;
-                        _$_v = _$Zv | _$Ev;
-                        _$Qv[_$Wv](_$_v);
-                        _$Qv = _$sD;
-                        _$Wv = "push";
-                        _$Yv = _$FC;
-                        _$Ov = 63;
-                        _$Pv = _$Yv & _$Ov;
-                        _$Gv = 128;
-                        _$Zv = _$Pv | _$Gv;
-                        _$Qv[_$Wv](_$Zv);
-                    } else {
-                        _$Qv = _$sD;
-                        _$Wv = "push";
-                        _$Yv = _$FC;
-                        _$Ov = 255;
-                        _$Pv = _$Yv & _$Ov;
-                        _$Qv[_$Wv](_$Pv);
-                    }
-                }
-            }
-        }
-        _$Qv = _$sD;
-        _$Wv = "length";
-        _$Yv = _$Qv[_$Wv];
-        _$JC = _$Yv;
-        _$Qv = _$JC;
-        _$Wv = 2;
-        _$Yv = _$Qv / _$Wv;
-        _$JC = _$Yv;
-        _$Qv = [];
-        _$fD = _$Qv;
-        _$Qv = 0;
-        _$$C = _$Qv;
-        for (_$tD = 0; _$tD < _$JC; _$tD++) {
-            _$Qv = _$sD;
-            _$Wv = _$$C;
-            _$Yv = _$Qv[_$Wv];
-            _$rD = _$Yv;
-            _$Qv = _$sD;
-            _$Wv = _$$C;
-            _$Yv = 1;
-            _$Ov = _$Wv + _$Yv;
-            _$Pv = _$Qv[_$Ov];
-            _$cD = _$Pv;
-            _$Qv = _$$C;
-            _$Wv = 2;
-            _$Yv = _$Qv + _$Wv;
-            _$$C = _$Yv;
-            _$Qv = _$rD;
-            _$Wv = 46;
-            _$Yv = _$Qv - _$Wv;
-            _$rD = _$Yv;
-            _$Qv = _$cD;
-            _$Wv = 46;
-            _$Yv = _$Qv - _$Wv;
-            _$cD = _$Yv;
-            _$Qv = _$cD;
-            _$Wv = 19;
-            _$Yv = _$Qv * _$Wv;
-            _$Ov = _$rD;
-            _$Pv = _$Yv + _$Ov;
-            _$eD = _$Pv;
-            _$Qv = _$eD;
-            _$Wv = 11;
-            _$Yv = _$Qv ^ _$Wv;
-            _$aD = _$Yv;
-            _$Qv = _$fD;
-            _$Wv = _$tD;
-            _$Yv = _$aD;
-            _$Qv[_$Wv] = _$Yv;
-        }
-        _$Qv = "";
-        _$iD = _$Qv;
-        _$iD = "object";
-        _$Qv = "XHu";
-        _$uD = _$Qv;
-        _$Wv = 1;
-        _$pD = _$Wv;
-        _$Qv = _$pD;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$pD = _$Yv;
-        _$Qv = 1;
-        _$uD = _$Qv;
-        _$Qv = "";
-        _$yD = _$Qv;
-        _$Qv = _$pD;
-        _$uD = _$Qv;
-        _$Qv = 49664;
-        _$Wv = 51200;
-        _$Yv = 51200;
-        _$Ov = 35328;
-        _$Pv = 60416;
-        _$Gv = 51712;
-        _$Zv = 56320;
-        _$Ev = 51712;
-        _$_v = 59392;
-        _$Vv = 38912;
-        _$qv = 53760;
-        _$Hv = 58880;
-        _$xv = 59392;
-        _$Bv = 51712;
-        _$Xv = 56320;
-        _$Fv = 51712;
-        _$$v = 58368;
-        _$es = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv, _$Xv, _$Fv, _$$v];
-        _$pD = _$es;
-
-        _$yD = "addEvenetListener";
-        _$Qv = _$pD;
-        _$Wv = "push";
-        _$Yv = _$uD;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$pD = _$Ov;
-        _$Qv = _$PY;
-        _$Wv = _$yD;
-        _$Yv = typeof _$Qv[_$Wv];
-        _$Ov = _$iD;
-        _$Pv = _$Yv === _$Ov;
-        _$Gj = _$Pv;
-        _$Gv = "hOY";
-        _$dD = _$Gv;
-        _$Zv = 1;
-        _$MD = _$Zv;
-        _$Qv = _$MD;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$MD = _$Yv;
-        _$Qv = 1;
-        _$dD = _$Qv;
-        _$Qv = "";
-        _$ID = _$Qv;
-        _$Qv = _$MD;
-        _$dD = _$Qv;
-        _$Qv = 12544;
-        _$Wv = 14208;
-        _$Yv = 12800;
-        _$Ov = 15488;
-        _$Pv = [_$Qv, _$Wv, _$Yv, _$Ov];
-        _$MD = _$Pv;
-
-        _$ID = "body";
-        _$Qv = _$MD;
-        _$Wv = "push";
-        _$Yv = _$dD;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$MD = _$Ov;
-        _$Qv = "vo5";
-        _$SD = _$Qv;
-        _$Wv = 1;
-        _$mD = _$Wv;
-        _$Qv = _$mD;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$mD = _$Yv;
-        _$Qv = 1;
-        _$SD = _$Qv;
-        _$Qv = "";
-        _$TD = _$Qv;
-        _$Qv = _$mD;
-        _$SD = _$Qv;
-        _$Qv = 6656;
-        _$Wv = 6208;
-        _$Yv = 7360;
-        _$Ov = 5056;
-        _$Pv = 7616;
-        _$Gv = 7040;
-        _$Zv = 5120;
-        _$Ev = 7296;
-        _$_v = 7104;
-        _$Vv = 7168;
-        _$qv = 6464;
-        _$Hv = 7296;
-        _$xv = 7424;
-        _$Bv = 7744;
-        _$Xv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv];
-        _$mD = _$Xv;
-
-        _$TD = "hasOwnProperty";
-        _$Qv = _$mD;
-        _$Wv = "push";
-        _$Yv = _$SD;
-        _$Ov = _$Qv[_$Wv](_$Yv);
+        _$Gj = typeof _$PY["addEvenetListener"] === "object";
         _$mD = _$Ov;
-        _$Qv = _$Lj;
-        _$Wv = _$Qv;
-        if (_$Wv) {
-            _$ks = _$sC;
-            _$Ns = _$TD;
-            _$Hs = _$ID;
-            _$xs = _$ks[_$Ns](_$Hs);
-            _$Wv = !_$xs;
+        _$Wv = _$Lj;
+        if (_$Lj) {
+            // 检测 document.hasOwnProperty("body")
+            _$Lj = !_$sC['hasOwnProperty']("body");
+            _$Lj = true;
         }
         _$Lj = _$Wv;
         _$Qv = _$Lj;
-        if (_$Qv) {
+        if (_$Lj) {
             for (_$Cj = 1; _$Cj < 20; _$Cj += 2) {
-                _$Qv = _$iY;
-                _$Wv = _$Cj;
-                _$Yv = _$iY;
-                _$Ov = _$Cj;
-                _$Pv = _$Yv[_$Ov];
-                _$Gv = 48;
-                _$Zv = _$Pv - _$Gv;
-                _$Ev = parseInt(_$Zv);
-                _$Vv = _$wY;
-                _$qv = _$MY[_$Vv];
-                _$Hv = _$Ev ^ _$qv;
-                _$Qv[_$Wv] = _$Hv;
+                _$iY[_$Cj] = parseInt(_$iY[_$Cj] - 48) ^ _$MY[_$wY];
             }
-        }
-        _$Qv = _$Lj;
-        _$Wv = !_$Qv;
-        if (_$Wv) {
+        } else {
             for (_$Cj = 0; _$Cj < _$iY.length; _$Cj++) {
-                _$Qv = _$iY;
-                _$Wv = _$Cj;
-                _$Yv = _$iY;
-                _$Ov = _$Cj;
-                _$Pv = _$Yv[_$Ov];
-                _$Zv = _$wY;
-                _$Ev = _$MY[_$Zv];
-                _$_v = _$Pv ^ _$Ev;
-                _$Qv[_$Wv] = _$_v;
+                _$iY[_$Cj] = _$iY[_$Cj] ^ _$MY[_$wY];
             }
         }
         _$wY++;
         _$Qv = [];
-        _$mY = _$Qv;
+        _$mY = [];
         _$Qv = 34;
         _$CD = _$Qv;
         _$Wv = 0;
@@ -8700,11 +8392,8 @@ _$a = function () {
         _$Bv = _$Hv + _$xv;
         _$WD = _$Bv;
 
-        console.log("log 3 _$OW: ", _$OW);
         for (_$YD = 0; _$YD < (_$DD ^ _$WD); _$YD++) {
-            _$Qv = 9;
-            _$Wv = 71;
-            _$Yv = _$Qv + _$Wv;
+            _$Yv = 80;
             _$UD = _$Yv;
             _$Ov = 0;
             _$OD = _$Ov;
@@ -8736,21 +8425,9 @@ _$a = function () {
             _$_v = _$Zv + _$Ev;
             _$Vv = _$UD;
             _$qv = _$_v - _$Vv;
-            _$Hv = 1;
-            _$xv = _$qv + _$Hv;
-            _$Bv = _$Gv * _$xv;
-            _$Xv = _$UD;
-            _$Fv = _$Bv + _$Xv;
-            _$ND = _$Fv;
-            _$Qv = _$mY;
-            _$Wv = "push";
-            _$Yv = _$OD;
-            _$Ov = _$ND;
-            _$Pv = _$Yv ^ _$Ov;
-            _$Qv[_$Wv](_$Pv);
+            _$mY["push"](_$OD ^ ((_$Gv * (_$qv + 1)) + _$UD));
         }
 
-        console.log("log 3 _$OW: ", _$OW);
         _$Qv = _$BW;
         _$ZD = _$Qv;
         _$Wv = 4;
@@ -8780,210 +8457,37 @@ _$a = function () {
         _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
         _$_D = _$Zv;
 
-        _$LD = "RegExp";
-        _$Qv = _$_D;
-        _$Wv = "push";
-        _$Yv = _$RD;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$_D = _$Ov;
-        _$Pv = _$pW["length"] > 10;
-        _$Gv = _$Pv;
+        _$Gv = _$pW["length"] > 10;
         if (_$Gv) {
-            _$ks = _$ZD;
-            _$Ns = _$LD;
-            _$Gv = _$ks[_$Ns];
+            _$Gv = _$ZD["RegExp"];
         }
         if (_$Gv) {
-            _$Qv = "N8";
-            _$qD = _$Qv;
-            _$Wv = 1;
-            _$HD = _$Wv;
-            _$Qv = _$HD;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$HD = _$Yv;
-            _$Qv = 1;
-            _$qD = _$Qv;
-            _$Qv = "";
-            _$xD = _$Qv;
-            _$Qv = _$HD;
-            _$qD = _$Qv;
-            _$Qv = 164;
-            _$Wv = 202;
-            _$Yv = 206;
-            _$Ov = 138;
-            _$Pv = 240;
-            _$Gv = 224;
-            _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-            _$HD = _$Zv;
-
-            _$xD = "RegExp";
-            _$Qv = _$HD;
-            _$Wv = "push";
-            _$Yv = _$qD;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$HD = _$Ov;
-            _$Qv = _$ZD;
-            _$Wv = _$xD;
-            _$Yv = _$Qv[_$Wv];
-            _$zD = _$Yv;
+            _$zD = _$ZD["RegExp"];
         }
-        _$Qv = "st";
-        _$XD = _$Qv;
-        _$Wv = 1;
-        _$FD = _$Wv;
-        _$Qv = _$FD;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$FD = _$Yv;
-        _$Qv = 1;
-        _$XD = _$Qv;
-        _$Qv = "";
-        _$JD = _$Qv;
-        _$Qv = _$FD;
-        _$XD = _$Qv;
-        _$Qv = 3604480;
-        _$Wv = 3178496;
-        _$Yv = 3866624;
-        _$Ov = 3440640;
-        _$Pv = 3375104;
-        _$Gv = 3178496;
-        _$Zv = 3801088;
-        _$Ev = 3637248;
-        _$_v = 3735552;
-        _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-        _$FD = _$Vv;
-
-        _$JD = "navigator";
-        _$Qv = _$FD;
-        _$Wv = "push";
-        _$Yv = _$XD;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$FD = _$Ov;
-        _$Pv = _$pW["length"] > 10;
-        _$Gv = _$Pv ? (_$ks = _$ZD, _$Ns = _$JD, _$ks[_$Ns]) : 0;
-        _$aK = _$Gv;
-        _$Zv = 0;
-        _$Ev = 1;
-        _$_v = _$Zv > _$Ev;
-        _$eK = _$_v;
-        _$Qv = _$aK;
-        if (_$Qv) {
-            _$Qv = 4;
-            _$Wv = 2;
-            _$Yv = _$Qv > _$Wv;
-            _$eK = _$Yv;
-        }
-        _$Qv = "Mh";
-        _$rK = _$Qv;
-        _$Wv = 1;
-        _$cK = _$Wv;
-        _$Qv = _$cK;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$cK = _$Yv;
-        _$Qv = 1;
-        _$rK = _$Qv;
-        _$Qv = "";
-        _$vK = _$Qv;
-        _$Qv = _$cK;
-        _$rK = _$Qv;
-        _$Qv = 6356992;
-        _$Wv = 6553600;
-        _$Yv = 6553600;
-        _$Ov = 6684672;
-        _$Pv = 7536640;
-        _$Gv = 6488064;
-        _$Zv = 7077888;
-        _$Ev = 6553600;
-        _$_v = 6488064;
-        _$Vv = 7077888;
-        _$qv = 7143424;
-        _$Hv = 7536640;
-        _$xv = 6553600;
-        _$Bv = 6488064;
-        _$Xv = 7077888;
-        _$Fv = 7012352;
-        _$$v = 7536640;
-        _$es = 7143424;
-        _$ts = 7536640;
-        _$ds = 6881280;
-        _$Ms = 6553600;
-        _$Is = 6946816;
-        _$As = 6684672;
-        _$Ss = 6881280;
-        _$Yn = 7274496;
-        _$Un = 7471104;
-        _$On = 6619136;
-        _$Pn = 7733248;
-        _$Gn = 7208960;
-        _$Nn = 7143424;
-        _$Zn = 7012352;
-        _$zn = 6488064;
-        _$En = 7077888;
-        _$Rn = 7208960;
-        _$_n = 7077888;
-        _$Ln = 6488064;
-        _$Vn = 7536640;
-        _$qn = 6553600;
-        _$Hn = 6488064;
-        _$xn = 7536640;
-        _$Bn = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv, _$Xv, _$Fv, _$$v, _$es, _$ts, _$ds, _$Ms, _$Is, _$As, _$Ss, _$Yn, _$Un, _$On, _$Pn, _$Gn, _$Nn, _$Zn, _$zn, _$En, _$Rn, _$_n, _$Ln, _$Vn, _$qn, _$Hn, _$xn];
-        _$cK = _$Bn;
+        _$aK = _$pW["length"] > 10 ?  _$ZD["navigator"] : 0;
+        _$eK = true;
 
         _$vK = "addfscldclmsdclksmsidjfiorevnmkclnlcsdcs";
-        _$Qv = _$cK;
-        _$Wv = "push";
-        _$Yv = _$rK;
-        _$Ov = _$Qv[_$Wv](_$Yv);
         _$cK = _$Ov;
-        _$Qv = _$vK;
+        _$Qv = "addfscldclmsdclksmsidjfiorevnmkclnlcsdcs";
         _$nK = _$Qv;
         _$Wv = 0;
         _$fK = _$Wv;
         for (var _$sx in _$aK) {
             _$fK++;
         }
-        _$Qv = _$eK;
-        _$Wv = _$Qv;
-        if (_$Wv) {
-            _$ks = _$fK;
-            _$Ns = 15;
-            _$Wv = _$ks > _$Ns;
-        }
-        _$eK = _$Wv;
-        _$Qv = _$eK;
-        if (_$Qv) {
+        // 检测
+        _$fK = 16
+        if (_$fK > 15) {
             for (_$YD = 0; _$YD < 20; _$YD += 2) {
-                _$Qv = _$mY;
-                _$Wv = _$YD;
-                _$Yv = _$mY;
-                _$Ov = _$YD;
-                _$Pv = _$Yv[_$Ov];
-                _$Gv = 3;
-                _$Zv = _$Pv / _$Gv;
-                _$Ev = parseInt(_$Zv);
-                _$Vv = _$wY;
-                _$qv = _$MY[_$Vv];
-                _$Hv = _$Ev ^ _$qv;
-                _$Qv[_$Wv] = _$Hv;
+                _$mY[_$YD] = parseInt(_$mY[_$YD] / 3) ^ _$MY[_$wY];
             }
-        }
-        _$Qv = _$eK;
-        _$Wv = !_$Qv;
-        if (_$Wv) {
+        }else {
             for (_$YD = 0; _$YD < _$mY.length; _$YD++) {
-                _$Qv = _$mY;
-                _$Wv = _$YD;
-                _$Yv = _$mY;
-                _$Ov = _$YD;
-                _$Pv = _$Yv[_$Ov];
-                _$Zv = _$wY;
-                _$Ev = _$MY[_$Zv];
-                _$_v = _$Pv ^ _$Ev;
-                _$Qv[_$Wv] = _$_v;
+                _$mY[_$YD] = _$mY[_$YD] ^ _$MY[_$wY];
             }
         }
+
         _$wY++;
         _$Qv = [];
         _$gW = _$Qv;
@@ -9070,7 +8574,7 @@ _$a = function () {
         _$Qv = _$sY;
         _$TK = _$Qv;
         _$Wv = 0;
-        _$jK = _$Wv;
+        _$jK = 0;
         _$Qv = _$eK;
         if (_$Qv) {
             _$Qv = "43939" + "413;39" + "3;4335" + "4";
@@ -9810,7 +9314,6 @@ _$a = function () {
             _$Qv[_$Wv](_$Pv);
         }
 
-        console.log("log 4 _$OW: ", _$OW);
         _$Qv = false;
         _$qQ = _$Qv;
         try {
@@ -10199,7 +9702,7 @@ _$a = function () {
         _$Qv = false;
         _$jK = _$Qv;
         _$Qv = [];
-        _$sY = _$Qv;
+        _$sY = [];
         _$Qv = 37;
         _$lW = _$Qv;
         _$Wv = 0;
@@ -10273,7 +9776,6 @@ _$a = function () {
         _$Ev = _$lW;
         _$_v = _$Zv + _$Ev;
         _$SW = _$_v;
-        console.log("==============")
         for (_$YD = 0; _$YD < (_$hW | _$SW); _$YD++) {
             _$Qv = 21;
             _$Wv = 59;
@@ -10361,873 +9863,28 @@ _$a = function () {
             _$Pv = _$Yv | _$Ov;
             _$Qv[_$Wv](_$Pv);
         }
+
         _$Qv = _$KY;
         _$WW = _$Qv;
-        _$Wv = "kK9";
-        _$YW = _$Wv;
-        _$Yv = 1;
-        _$PW = _$Yv;
-        _$Qv = _$PW;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$PW = _$Yv;
-        _$Qv = 1;
-        _$YW = _$Qv;
-        _$Qv = "";
-        _$NW = _$Qv;
-        _$Qv = _$PW;
-        _$YW = _$Qv;
-        _$Qv = 7274496;
-        _$Wv = 6422528;
-        _$Yv = 6946816;
-        _$Ov = 6619136;
-        _$Pv = 6488064;
-        _$Gv = 7602176;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$PW = _$Zv;
 
-        _$NW = "object";
-        _$Qv = _$PW;
-        _$Wv = "push";
-        _$Yv = _$YW;
-        _$Ov = _$Qv["push"](_$Yv);
-        _$PW = _$Ov;
-        _$Qv = "jI";
-        _$EW = _$Qv;
-        _$Wv = 1;
-        _$RW = _$Wv;
-        _$Qv = _$RW;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$RW = _$Yv;
-        _$Qv = 1;
-        _$EW = _$Qv;
-        _$Qv = "";
-        _$HW = _$Qv;
-        _$Qv = _$RW;
-        _$EW = _$Qv;
-        _$Qv = 6720;
-        _$Wv = 7360;
-        _$Yv = 4480;
-        _$Ov = 6720;
-        _$Pv = 7040;
-        _$Gv = 6720;
-        _$Zv = 7424;
-        _$Ev = 6464;
-        _$_v = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev];
-        _$RW = _$_v;
-
-        _$HW = "isFinite";
-        _$Qv = _$RW;
-        _$Wv = "push";
-        _$Yv = _$EW;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$RW = _$Ov;
-        _$Qv = _$AW;
-        _$Wv = _$HW;
-        _$Yv = typeof _$Qv[_$Wv];
-        _$Ov = _$NW;
-        _$Pv = _$Yv === _$Ov;
+        _$Pv = typeof _$AW["isFinite"] === "object";
         _$HQ = _$Pv;
-        _$Qv = _$eK;
-        if (_$Qv) {
-            _$Qv = "wv";
-            _$XW = _$Qv;
-            _$Wv = 1;
-            _$FW = _$Wv;
-            _$Qv = _$FW;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$FW = _$Yv;
-            _$Qv = 1;
-            _$XW = _$Qv;
-            _$Qv = "";
-            _$JW = _$Qv;
-            _$Qv = _$FW;
-            _$XW = _$Qv;
-            _$Qv = 216;
-            _$Wv = 194;
-            _$Yv = 220;
-            _$Ov = 206;
-            _$Pv = 234;
-            _$Gv = 194;
-            _$Zv = 206;
-            _$Ev = 202;
-            _$_v = 230;
-            _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            _$FW = _$Vv;
-
-            _$JW = "languages";
-            _$Qv = _$FW;
-            _$Wv = "push";
-            _$Yv = _$XW;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$FW = _$Ov;
-            _$Qv = "ygM";
-            _$eY = _$Qv;
-            _$Wv = 1;
-            _$cY = _$Wv;
-            _$Qv = _$cY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$cY = _$Yv;
-            _$Qv = 1;
-            _$eY = _$Qv;
-            _$Qv = "";
-            _$nY = _$Qv;
-            _$Qv = _$cY;
-            _$eY = _$Qv;
-            _$Qv = 112640;
-            _$Wv = 99328;
-            _$Yv = 120832;
-            _$Ov = 107520;
-            _$Pv = 105472;
-            _$Gv = 99328;
-            _$Zv = 118784;
-            _$Ev = 113664;
-            _$_v = 116736;
-            _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            _$cY = _$Vv;
-
-            _$nY = "navigator";
-            _$Qv = _$cY;
-            _$Wv = "push";
-            _$Yv = _$eY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$cY = _$Ov;
-            _$Qv = _$WW;
-            _$Wv = _$nY;
-            _$Yv = _$Qv[_$Wv];
-            _$Ov = _$JW;
-            _$Pv = _$Yv[_$Ov];
-            _$jK = _$Pv;
-        }
-        _$Qv = _$jK;
-        if (_$Qv) {
-            _$Qv = "Pj$";
-            _$tY = _$Qv;
-            _$Wv = 1;
-            _$kY = _$Wv;
-            _$Qv = _$kY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$kY = _$Yv;
-            _$Qv = 1;
-            _$tY = _$Qv;
-            _$Qv = "";
-            _$lY = _$Qv;
-            _$Qv = _$kY;
-            _$tY = _$Qv;
-            _$Qv = 7208960;
-            _$Wv = 6356992;
-            _$Yv = 7733248;
-            _$Ov = 6881280;
-            _$Pv = 6750208;
-            _$Gv = 6356992;
-            _$Zv = 7602176;
-            _$Ev = 7274496;
-            _$_v = 7471104;
-            _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            _$kY = _$Vv;
-            for (_$gY = 0; _$gY < _$kY.length; _$gY++) {
-                _$Qv = _$lY;
-                _$Wv = _$kY;
-                _$Yv = _$gY;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 16;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$lY = _$Ev;
-            }
-            _$Qv = _$kY;
-            _$Wv = "push";
-            _$Yv = _$tY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$kY = _$Ov;
-            _$Qv = "Cs";
-            _$pY = _$Qv;
-            _$Wv = 1;
-            _$dY = _$Wv;
-            _$Qv = _$dY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$dY = _$Yv;
-            _$Qv = 1;
-            _$pY = _$Qv;
-            _$Qv = "";
-            _$AY = _$Qv;
-            _$Qv = _$dY;
-            _$pY = _$Qv;
-            _$Qv = 221184;
-            _$Wv = 198656;
-            _$Yv = 225280;
-            _$Ov = 210944;
-            _$Pv = 239616;
-            _$Gv = 198656;
-            _$Zv = 210944;
-            _$Ev = 206848;
-            _$_v = 235520;
-            _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            _$dY = _$Vv;
-            for (_$SY = 0; _$SY < _$dY.length; _$SY++) {
-                _$Qv = _$AY;
-                _$Wv = _$dY;
-                _$Yv = _$SY;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 11;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$AY = _$Ev;
-            }
-            _$Qv = _$dY;
-            _$Wv = "push";
-            _$Yv = _$pY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$dY = _$Ov;
-            _$Qv = "zu9";
-            _$TY = _$Qv;
-            _$Wv = 1;
-            _$CY = _$Wv;
-            _$Qv = _$CY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$CY = _$Yv;
-            _$Qv = 1;
-            _$TY = _$Qv;
-            _$Qv = "";
-            _$QY = _$Qv;
-            _$Qv = _$CY;
-            _$TY = _$Qv;
-            _$Qv = 6815744;
-            _$Wv = 6356992;
-            _$Yv = 7536640;
-            _$Ov = 5177344;
-            _$Pv = 7798784;
-            _$Gv = 7208960;
-            _$Zv = 5242880;
-            _$Ev = 7471104;
-            _$_v = 7274496;
-            _$Vv = 7340032;
-            _$qv = 6619136;
-            _$Hv = 7471104;
-            _$xv = 7602176;
-            _$Bv = 7929856;
-            _$Xv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv];
-            _$CY = _$Xv;
-            for (_$YY = 0; _$YY < _$CY.length; _$YY++) {
-                _$Qv = _$QY;
-                _$Wv = _$CY;
-                _$Yv = _$YY;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 16;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$QY = _$Ev;
-            }
-            _$Qv = _$CY;
-            _$Wv = "push";
-            _$Yv = _$TY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$CY = _$Ov;
-            _$Qv = _$WW;
-            _$Wv = _$lY;
-            _$Yv = _$Qv[_$Wv];
-            _$Ov = _$QY;
-            _$Pv = _$AY;
-            _$Gv = _$Yv[_$Ov](_$Pv);
-            _$Zv = !_$Gv;
-            _$jK = _$Zv;
+        _$jK = _$WW["navigator"]["languages"];
+        if (_$jK) {
+            _$jK = !_$WW["navigator"]["hasOwnProperty"]("languages");
+            // 检测
+            _$jK = true;
         }
         _$Qv = _$eK;
         if (_$Qv) {
-            _$Qv = "Ws";
-            _$GY = _$Qv;
-            _$Wv = 1;
-            _$NY = _$Wv;
-            _$Qv = _$NY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$NY = _$Yv;
-            _$Qv = 1;
-            _$GY = _$Qv;
-            _$Qv = "";
-            _$ZY = _$Qv;
-            _$Qv = _$NY;
-            _$GY = _$Qv;
-            _$Qv = 1802240;
-            _$Wv = 1589248;
-            _$Yv = 1933312;
-            _$Ov = 1720320;
-            _$Pv = 1687552;
-            _$Gv = 1589248;
-            _$Zv = 1900544;
-            _$Ev = 1818624;
-            _$_v = 1867776;
-            _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            _$NY = _$Vv;
-            for (_$RY = 0; _$RY < _$NY.length; _$RY++) {
-                _$Qv = _$ZY;
-                _$Wv = _$NY;
-                _$Yv = _$RY;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 14;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$ZY = _$Ev;
-            }
-            _$Qv = _$NY;
-            _$Wv = "push";
-            _$Yv = _$GY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$NY = _$Ov;
-            _$Qv = "u3G";
-            _$VY = _$Qv;
-            _$Wv = 1;
-            _$qY = _$Wv;
-            _$Qv = _$qY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$qY = _$Yv;
-            _$Qv = 1;
-            _$VY = _$Qv;
-            _$Qv = "";
-            _$HY = _$Qv;
-            _$Qv = _$qY;
-            _$VY = _$Qv;
-            _$Qv = 7488;
-            _$Wv = 7360;
-            _$Yv = 6464;
-            _$Ov = 7296;
-            _$Pv = 4160;
-            _$Gv = 6592;
-            _$Zv = 6464;
-            _$Ev = 7040;
-            _$_v = 7424;
-            _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            _$qY = _$Vv;
-            for (_$xY = 0; _$xY < _$qY.length; _$xY++) {
-                _$Qv = _$HY;
-                _$Wv = _$qY;
-                _$Yv = _$xY;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 6;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$HY = _$Ev;
-            }
-            _$Qv = _$qY;
-            _$Wv = "push";
-            _$Yv = _$VY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$qY = _$Ov;
-            _$Qv = _$WW;
-            _$Wv = _$ZY;
-            _$Yv = _$Qv[_$Wv];
-            _$Ov = _$HY;
-            _$Pv = _$Yv[_$Ov];
-            _$BY = _$Pv;
-            _$Gv = "Pa";
-            _$XY = _$Gv;
-            _$Zv = 1;
-            _$FY = _$Zv;
-            _$Qv = _$FY;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$FY = _$Yv;
-            _$Qv = 1;
-            _$XY = _$Qv;
-            _$Qv = "";
-            _$JY = _$Qv;
-            _$Qv = _$FY;
-            _$XY = _$Qv;
-            _$Qv = 475136;
-            _$Wv = 454656;
-            _$Yv = 311296;
-            _$Ov = 454656;
-            _$Pv = 487424;
-            _$Gv = 413696;
-            _$Zv = 466944;
-            _$Ev = 274432;
-            _$_v = 397312;
-            _$Vv = 471040;
-            _$qv = 413696;
-            _$Hv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv];
-            _$FY = _$Hv;
-            for (_$$Y = 0; _$$Y < _$FY.length; _$$Y++) {
-                _$Qv = _$JY;
-                _$Wv = _$FY;
-                _$Yv = _$$Y;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 12;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$JY = _$Ev;
-            }
-            _$Qv = _$FY;
-            _$Wv = "push";
-            _$Yv = _$XY;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$FY = _$Ov;
-            _$Qv = ";433<1" + "3384=3" + "54=19" + "344=" + "3";
-            _$iU = _$Qv;
-            _$Qv = _$iU;
-            _$Wv = "length";
-            _$Yv = _$Qv[_$Wv];
-            _$aU = _$Yv;
-            _$Qv = [];
-            _$kU = _$Qv;
-            for (_$bU = 0; _$bU < _$aU; _$bU++) {
-                _$Qv = _$iU;
-                _$Wv = "charCodeAt";
-                _$Yv = _$bU;
-                _$Ov = _$Qv[_$Wv](_$Yv);
-                _$rU = _$Ov;
-                _$Qv = _$rU;
-                _$Wv = 65536;
-                _$Yv = _$Qv >= _$Wv;
-                _$Ov = _$Yv;
-                if (_$Ov) {
-                    _$ks = _$rU;
-                    _$Ns = 1114111;
-                    _$Ov = _$ks <= _$Ns;
-                }
-                if (_$Ov) {
-                    _$Qv = _$kU;
-                    _$Wv = "push";
-                    _$Yv = _$rU;
-                    _$Ov = 18;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 7;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 240;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$kU;
-                    _$Wv = "push";
-                    _$Yv = _$rU;
-                    _$Ov = 12;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 63;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 128;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$kU;
-                    _$Wv = "push";
-                    _$Yv = _$rU;
-                    _$Ov = 6;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 63;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 128;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$kU;
-                    _$Wv = "push";
-                    _$Yv = _$rU;
-                    _$Ov = 63;
-                    _$Pv = _$Yv & _$Ov;
-                    _$Gv = 128;
-                    _$Zv = _$Pv | _$Gv;
-                    _$Qv[_$Wv](_$Zv);
-                } else {
-                    _$Qv = _$rU;
-                    _$Wv = 2048;
-                    _$Yv = _$Qv >= _$Wv;
-                    _$Ov = _$Yv;
-                    if (_$Ov) {
-                        _$ks = _$rU;
-                        _$Ns = 65535;
-                        _$Ov = _$ks <= _$Ns;
-                    }
-                    if (_$Ov) {
-                        _$Qv = _$kU;
-                        _$Wv = "push";
-                        _$Yv = _$rU;
-                        _$Ov = 12;
-                        _$Pv = _$Yv >> _$Ov;
-                        _$Gv = 15;
-                        _$Zv = _$Pv & _$Gv;
-                        _$Ev = 224;
-                        _$_v = _$Zv | _$Ev;
-                        _$Qv[_$Wv](_$_v);
-                        _$Qv = _$kU;
-                        _$Wv = "push";
-                        _$Yv = _$rU;
-                        _$Ov = 6;
-                        _$Pv = _$Yv >> _$Ov;
-                        _$Gv = 63;
-                        _$Zv = _$Pv & _$Gv;
-                        _$Ev = 128;
-                        _$_v = _$Zv | _$Ev;
-                        _$Qv[_$Wv](_$_v);
-                        _$Qv = _$kU;
-                        _$Wv = "push";
-                        _$Yv = _$rU;
-                        _$Ov = 63;
-                        _$Pv = _$Yv & _$Ov;
-                        _$Gv = 128;
-                        _$Zv = _$Pv | _$Gv;
-                        _$Qv[_$Wv](_$Zv);
-                    } else {
-                        _$Qv = _$rU;
-                        _$Wv = 128;
-                        _$Yv = _$Qv >= _$Wv;
-                        _$Ov = _$Yv;
-                        if (_$Ov) {
-                            _$ks = _$rU;
-                            _$Ns = 2047;
-                            _$Ov = _$ks <= _$Ns;
-                        }
-                        if (_$Ov) {
-                            _$Qv = _$kU;
-                            _$Wv = "push";
-                            _$Yv = _$rU;
-                            _$Ov = 6;
-                            _$Pv = _$Yv >> _$Ov;
-                            _$Gv = 31;
-                            _$Zv = _$Pv & _$Gv;
-                            _$Ev = 192;
-                            _$_v = _$Zv | _$Ev;
-                            _$Qv[_$Wv](_$_v);
-                            _$Qv = _$kU;
-                            _$Wv = "push";
-                            _$Yv = _$rU;
-                            _$Ov = 63;
-                            _$Pv = _$Yv & _$Ov;
-                            _$Gv = 128;
-                            _$Zv = _$Pv | _$Gv;
-                            _$Qv[_$Wv](_$Zv);
-                        } else {
-                            _$Qv = _$kU;
-                            _$Wv = "push";
-                            _$Yv = _$rU;
-                            _$Ov = 255;
-                            _$Pv = _$Yv & _$Ov;
-                            _$Qv[_$Wv](_$Pv);
-                        }
-                    }
-                }
-            }
-            _$Qv = _$kU;
-            _$Wv = "length";
-            _$Yv = _$Qv[_$Wv];
-            _$cU = _$Yv;
-            _$Qv = _$cU;
-            _$Wv = 2;
-            _$Yv = _$Qv / _$Wv;
-            _$cU = _$Yv;
-            _$Qv = [];
-            _$lU = _$Qv;
-            _$Qv = 0;
-            _$vU = _$Qv;
-            for (_$hU = 0; _$hU < _$cU; _$hU++) {
-                _$Qv = _$kU;
-                _$Wv = _$vU;
-                _$Yv = _$Qv[_$Wv];
-                _$fU = _$Yv;
-                _$Qv = _$kU;
-                _$Wv = _$vU;
-                _$Yv = 1;
-                _$Ov = _$Wv + _$Yv;
-                _$Pv = _$Qv[_$Ov];
-                _$tU = _$Pv;
-                _$Qv = _$vU;
-                _$Wv = 2;
-                _$Yv = _$Qv + _$Wv;
-                _$vU = _$Yv;
-                _$Qv = _$fU;
-                _$Wv = 46;
-                _$Yv = _$Qv - _$Wv;
-                _$fU = _$Yv;
-                _$Qv = _$tU;
-                _$Wv = 46;
-                _$Yv = _$Qv - _$Wv;
-                _$tU = _$Yv;
-                _$Qv = _$tU;
-                _$Wv = 19;
-                _$Yv = _$Qv * _$Wv;
-                _$Ov = _$fU;
-                _$Pv = _$Yv + _$Ov;
-                _$nU = _$Pv;
-                _$Qv = _$nU;
-                _$Wv = 11;
-                _$Yv = _$Qv ^ _$Wv;
-                _$sU = _$Yv;
-                _$Qv = _$lU;
-                _$Wv = _$hU;
-                _$Yv = _$sU;
-                _$Qv[_$Wv] = _$Yv;
-            }
-            _$Qv = "";
-            _$uU = _$Qv;
-            for (_$SU = 0; _$SU < _$lU.length; _$SU++) {
-                _$Qv = _$lU;
-                _$Wv = _$SU;
-                _$Yv = _$Qv[_$Wv];
-                _$Ov = "toSt" + "ring";
-                _$Pv = 2;
-                _$Gv = _$Yv[_$Ov](_$Pv);
-                _$wU = _$Gv;
-                _$Qv = _$wU;
-                _$Wv = "match";
-                _$Yv = /^1+?(?=0)/;
-                _$Ov = _$Qv[_$Wv](_$Yv);
-                _$dU = _$Ov;
-                _$Qv = _$dU;
-                _$Wv = _$Qv;
-                if (_$Wv) {
-                    _$ks = _$wU;
-                    _$Ns = "length";
-                    _$Hs = _$ks[_$Ns];
-                    _$xs = 8;
-                    _$Wv = _$Hs === _$xs;
-                }
-                if (_$Wv) {
-                    _$Qv = _$dU;
-                    _$Wv = 0;
-                    _$Yv = _$Qv[_$Wv];
-                    _$Ov = "length";
-                    _$Pv = _$Yv[_$Ov];
-                    _$MU = _$Pv;
-                    _$Qv = _$lU;
-                    _$Wv = _$SU;
-                    _$Yv = _$Qv[_$Wv];
-                    _$Ov = "toSt" + "ring";
-                    _$Pv = 2;
-                    _$Gv = _$Yv[_$Ov](_$Pv);
-                    _$Zv = "slice";
-                    _$Ev = 7;
-                    _$_v = _$MU;
-                    _$Vv = _$Ev - _$_v;
-                    _$qv = _$Gv[_$Zv](_$Vv);
-                    _$IU = _$qv;
-                    for (_$mU = 0; _$mU < _$MU; _$mU++) {
-                        _$Qv = _$lU;
-                        _$Wv = _$mU;
-                        _$Yv = _$SU;
-                        _$Ov = _$Wv + _$Yv;
-                        _$Pv = _$Qv[_$Ov];
-                        _$Gv = "toStri" + "ng";
-                        _$Zv = 2;
-                        _$Ev = _$Pv[_$Gv](_$Zv);
-                        _$_v = "slice";
-                        _$Vv = 2;
-                        _$qv = _$Ev[_$_v](_$Vv);
-                        _$IU += _$qv;
-                    }
-                    _$Qv = _$IU;
-                    _$Wv = 2;
-                    _$Yv = parseInt(_$Qv, _$Wv);
-                    _$Ov = String.fromCharCode(_$Yv);
-                    _$uU += _$Ov;
-                    _$Qv = _$MU;
-                    _$Wv = 1;
-                    _$Yv = _$Qv - _$Wv;
-                    _$SU += _$Yv;
-                } else {
-                    _$Qv = _$lU;
-                    _$Wv = _$SU;
-                    _$Yv = _$Qv[_$Wv];
-                    _$Ov = String.fromCharCode(_$Yv);
-                    _$uU += _$Ov;
-                }
-            }
-            _$Qv = _$BY;
-            _$Wv = _$Qv;
-            if (_$Wv) {
-                _$ks = _$BY;
-                _$Ns = _$JY;
-                _$Wv = _$ks[_$Ns];
-            }
-            if (_$Wv) {
-                _$Yv = (_$Hs = _$BY, _$xs = _$uU, _$Hs[_$xs]());
-            } else {
-                _$Yv = "";
-            }
-            _$BY = _$Yv;
-            _$Qv = "mO";
-            _$TU = _$Qv;
-            _$Wv = 1;
-            _$jU = _$Wv;
-            _$Qv = _$jU;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$jU = _$Yv;
-            _$Qv = 1;
-            _$TU = _$Qv;
-            _$Qv = "";
-            _$CU = _$Qv;
-            _$Qv = _$jU;
-            _$TU = _$Qv;
-            _$Qv = 1680;
-            _$Wv = 1760;
-            _$Yv = 1600;
-            _$Ov = 1616;
-            _$Pv = 1920;
-            _$Gv = 1264;
-            _$Zv = 1632;
-            _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-            _$jU = _$Ev;
-            for (_$DU = 0; _$DU < _$jU.length; _$DU++) {
-                _$Qv = _$CU;
-                _$Wv = _$jU;
-                _$Yv = _$DU;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 4;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$CU = _$Ev;
-            }
-            _$Qv = _$jU;
-            _$Wv = "push";
-            _$Yv = _$TU;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$jU = _$Ov;
-            _$Qv = "NyU";
-            _$KU = _$Qv;
-            _$Wv = 1;
-            _$QU = _$Wv;
-            _$Qv = _$QU;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$QU = _$Yv;
-            _$Qv = 1;
-            _$KU = _$Qv;
-            _$Qv = "";
-            _$WU = _$Qv;
-            _$Qv = _$QU;
-            _$KU = _$Qv;
-            _$Qv = 3440640;
-            _$Wv = 3604480;
-            _$Yv = 3276800;
-            _$Ov = 3309568;
-            _$Pv = 3932160;
-            _$Gv = 2588672;
-            _$Zv = 3342336;
-            _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-            _$QU = _$Ev;
-            for (_$YU = 0; _$YU < _$QU.length; _$YU++) {
-                _$Qv = _$WU;
-                _$Wv = _$QU;
-                _$Yv = _$YU;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 15;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$WU = _$Ev;
-            }
-            _$Qv = _$QU;
-            _$Wv = "push";
-            _$Yv = _$KU;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$QU = _$Ov;
-            _$Qv = "k0Q";
-            _$UU = _$Qv;
-            _$Wv = 1;
-            _$OU = _$Wv;
-            _$Qv = _$OU;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$OU = _$Yv;
-            _$Qv = 1;
-            _$UU = _$Qv;
-            _$Qv = "";
-            _$PU = _$Qv;
-            _$Qv = _$OU;
-            _$UU = _$Qv;
-            _$Qv = 111616;
-            _$Wv = 117760;
-            _$Yv = 107520;
-            _$Ov = 103424;
-            _$Pv = [_$Qv, _$Wv, _$Yv, _$Ov];
-            _$OU = _$Pv;
-            for (_$GU = 0; _$GU < _$OU.length; _$GU++) {
-                _$Qv = _$PU;
-                _$Wv = _$OU;
-                _$Yv = _$GU;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 10;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$PU = _$Ev;
-            }
-            _$Qv = _$OU;
-            _$Wv = "push";
-            _$Yv = _$UU;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$OU = _$Ov;
-            _$Qv = "Bj";
-            _$NU = _$Qv;
-            _$Wv = 1;
-            _$ZU = _$Wv;
-            _$Qv = _$ZU;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$ZU = _$Yv;
-            _$Qv = 1;
-            _$NU = _$Qv;
-            _$Qv = "";
-            _$zU = _$Qv;
-            _$Qv = _$ZU;
-            _$NU = _$Qv;
-            _$Qv = 3801088;
-            _$Wv = 3735552;
-            _$Yv = 3440640;
-            _$Ov = 3276800;
-            _$Pv = 3309568;
-            _$Gv = 3604480;
-            _$Zv = 3801088;
-            _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-            _$ZU = _$Ev;
-            for (_$EU = 0; _$EU < _$ZU.length; _$EU++) {
-                _$Qv = _$zU;
-                _$Wv = _$ZU;
-                _$Yv = _$EU;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 15;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$zU = _$Ev;
-            }
-            _$Qv = _$ZU;
-            _$Wv = "push";
-            _$Yv = _$NU;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$ZU = _$Ov;
-            _$Qv = _$BY;
-            _$Wv = _$CU;
-            _$Yv = _$zU;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$Pv = 1;
-            _$Gv = -_$Pv;
-            _$Zv = _$Ov != _$Gv;
-            _$Ev = _$Zv;
-            if (!_$Ev) {
-                _$ks = _$BY;
-                _$Ns = _$WU;
-                _$Hs = _$PU;
-                _$xs = _$ks[_$Ns](_$Hs);
-                _$wf = 1;
-                _$df = -_$wf;
-                _$Ev = _$xs != _$df;
-            }
-            if (_$Ev) {
-                _$Qv = 1;
-                _$jK = _$Qv;
+            _$BY =  _$WW["navigator"]["userAgent"];
+            _$BY = _$BY["toLowerCase"] ? _$BY["toLowerCase"]() : "";
+            if (_$BY["indexOf"]("trident") != -1 || _$BY["indexOf"]("msie") != -1) {
+                _$jK = 1;
             }
         }
         _$Qv = _$jK;
+
         if (_$Qv) {
             for (_$YD = 1; _$YD < 10 * 2; _$YD += 2) {
                 _$Qv = _$sY;
@@ -11244,10 +9901,7 @@ _$a = function () {
                 _$Hv = _$Ev ^ _$qv;
                 _$Qv[_$Wv] = _$Hv;
             }
-        }
-        _$Qv = _$jK;
-        _$Wv = !_$Qv;
-        if (_$Wv) {
+        }else {
             for (_$YD = 0; _$YD < _$sY.length; _$YD++) {
                 _$Qv = _$sY;
                 _$Wv = _$YD;
@@ -11726,7 +10380,6 @@ _$a = function () {
         _$PY = _$_U[_$dO];
         _$Qv = _$RU;
         if (_$Qv) {
-            console.log("_$OW: =======>", _$OW)
             for (_$IO = 0; _$IO < 30; _$IO++) {
                 _$AO = 81;
                 _$Gv = 0;
@@ -11926,7 +10579,6 @@ _$a = function () {
             }
         }
 
-        console.log("log 5 _$OW: ", _$OW, _$zW);
         _$Qv = [];
         _$AW = _$Qv;
         _$Qv = this;
@@ -12511,10 +11163,8 @@ _$a = function () {
         _$VP = _$Ov;
         _$Qv = this;
         _$Wv = _$qP;
-        _$Yv = this["window"];
-        _$oY = _$Yv;
+        _$oY = this["window"];
         _$Qv = _$TP;
-        console.log("log 6 _$OW: ", _$OW, " _$Qv: ", _$Qv);
         if (_$Qv) {
             for (_$xP = 0; _$xP < 32; _$xP++) {
                 _$Qv = 1;
@@ -12569,7 +11219,6 @@ _$a = function () {
                 _$Qv[_$Wv](_$Pv);
             }
         }
-        console.log("log 6 _$OW: ", _$OW);
         _$Qv = _$WY;
         _$aG = _$Qv;
         _$Wv = "SHz";
@@ -13114,7 +11763,6 @@ _$a = function () {
         _$Wv = !_$Qv;
         // 检测
         _$Wv = false;
-        console.log("log 7 _$OW: ", _$OW, " _$Wv: ", _$Wv, " _$$W: ", _$$W);
         if (_$Wv) {
             for (_$aN = 0; _$aN < 35; _$aN++) {
                 _$Qv = 140;
@@ -13229,7 +11877,6 @@ _$a = function () {
         _$uN = 0;
         _$Yv = 0;
         _$pN = 0;
-        console.log("_$IY: _$OW: ", _$OW, " _$wY: ", _$wY);
         _$Ov = _$OW;
         _$Pv = (((_$OW * 9301) + 49297) % 233280) / 233280;
         _$_v = _$zW[0 ^ ((_$Pv * ((_$zW["length"] - 1 - 0) + 1)) + 0)] - 80;
@@ -13332,7 +11979,6 @@ _$a = function () {
         _$Yv = 104881;
         _$Ov = _$Wv - _$Yv;
         _$Pv = _$Qv / _$Ov;
-        console.log("log 8 _$OW: ", _$OW, " _$$W: ", _$$W);
         _$Gv = _$$W;
         _$Zv = "length";
         _$Ev = _$$W["length"];
@@ -13483,330 +12129,12 @@ _$a = function () {
             _$Yv = _$Qv | _$Wv;
             _$PY = _$Yv;
         }
-        _$Qv = 0;
-        _$TZ = 0;
-        {
-            _$Qv = 'wAi';
-            _$jZ = _$Qv;
-            _$Wv = 1;
-            _$CZ = _$Wv;
-            _$Qv = _$CZ;
-            _$Wv = 1;
-            _$Yv = _$Qv + _$Wv;
-            _$CZ = _$Yv;
-            _$Qv = 1;
-            _$jZ = _$Qv;
-            _$Qv = "";
-            _$DZ = _$Qv;
-            _$Qv = _$CZ;
-            _$jZ = _$Qv;
-            _$Qv = 59392;
-            _$Wv = 56832;
-            _$Yv = 42496;
-            _$Ov = 59392;
-            _$Pv = 58368;
-            _$Gv = 53760;
-            _$Zv = 56320;
-            _$Ev = 52736;
-            _$_v = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev];
-            _$CZ = _$_v;
-            for (_$KZ = 0; _$KZ < _$CZ.length; _$KZ++) {
-                _$Qv = _$DZ;
-                _$Wv = _$CZ;
-                _$Yv = _$KZ;
-                _$Ov = _$Wv[_$Yv];
-                _$Pv = 9;
-                _$Gv = _$Ov >> _$Pv;
-                _$Zv = String.fromCharCode(_$Gv);
-                _$Ev = _$Qv + _$Zv;
-                _$DZ = _$Ev
-            }
-            _$Qv = _$CZ;
-            _$Wv = 'push';
-            _$Yv = _$jZ;
-            _$Ov = _$Qv["push"](_$Yv);
-            _$CZ = _$Ov;
-            _$Qv = _$BW;
-            _$Wv = _$DZ;
-            _$Yv = _$Qv[_$Wv]();
-            _$QZ = _$Yv;
-            _$Qv = _$QZ;
-            _$TZ = _$Qv;
-            // 剩下的是只有Node能执行，浏览器执行不了的
-            // _$Qv = module;
-            // _$WZ = _$Qv;
-            // _$Wv = 'RUO';
-            // _$YZ = _$Wv;
-            // _$Yv = 1;
-            // _$UZ = _$Yv;
-            // _$Qv = _$UZ;
-            // _$Wv = 1;
-            // _$Yv = _$Qv + _$Wv;
-            // _$UZ = _$Yv;
-            // _$Qv = 1;
-            // _$YZ = _$Qv;
-            // _$Qv = "";
-            // _$OZ = _$Qv;
-            // _$Qv = _$UZ;
-            // _$YZ = _$Qv;
-            // _$Qv = 256;
-            // _$Wv = 144;
-            // _$Yv = 280;
-            // _$Ov = 272;
-            // _$Pv = 400;
-            // _$Gv = 376;
-            // _$Zv = 396;
-            // _$Ev = 460;
-            // _$_v = 416;
-            // _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-            // _$UZ = _$Vv;
-            // for (_$PZ = 0; _$PZ < _$UZ.length; _$PZ++) {
-            //     _$Qv = _$OZ;
-            //     _$Wv = _$UZ;
-            //     _$Yv = _$PZ;
-            //     _$Ov = _$Wv[_$Yv];
-            //     _$Pv = 2;
-            //     _$Gv = _$Ov >> _$Pv;
-            //     _$Zv = String.fromCharCode(_$Gv);
-            //     _$Ev = _$Qv + _$Zv;
-            //     _$OZ = _$Ev
-            // }
-            // _$Qv = _$UZ;
-            // _$Wv = 'push';
-            // _$Yv = _$YZ;
-            // _$Ov = _$Qv[_$Wv](_$Yv);
-            // _$UZ = _$Ov;
-            // _$Qv = _$QZ;
-            // _$Wv = _$OZ;
-            // _$Yv = _$Qv + _$Wv;
-            // _$GZ = _$Yv;
-            // _$Qv = 0;
-            // _$TZ = _$Qv
-        }
-        _$Qv = "W$x";
-        _$NZ = _$Qv;
-        _$Wv = 1;
-        _$ZZ = _$Wv;
-        _$Qv = _$ZZ;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$ZZ = _$Yv;
-        _$Qv = 1;
-        _$NZ = _$Qv;
-        _$Qv = "";
-        _$zZ = _$Qv;
-        _$Qv = _$ZZ;
-        _$NZ = _$Qv;
-        _$Qv = 3712;
-        _$Wv = 3552;
-        _$Yv = 2656;
-        _$Ov = 3712;
-        _$Pv = 3648;
-        _$Gv = 3360;
-        _$Zv = 3520;
-        _$Ev = 3296;
-        _$_v = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev];
-        _$ZZ = _$_v;
-        for (_$EZ = 0; _$EZ < _$ZZ.length; _$EZ++) {
-            _$Qv = _$zZ;
-            _$Wv = _$ZZ;
-            _$Yv = _$EZ;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 5;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$zZ = _$Ev;
-        }
-        _$Qv = _$ZZ;
-        _$Wv = "push";
-        _$Yv = _$NZ;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$ZZ = _$Ov;
-        _$Qv = _$oU;
-        _$Wv = _$zZ;
-        _$Yv = _$Qv[_$Wv]();
-        _$RZ = _$Yv;
-        _$Ov = "RD";
-        _$_Z = _$Ov;
-        _$Pv = 1;
-        _$LZ = _$Pv;
-        _$Qv = _$LZ;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$LZ = _$Yv;
-        _$Qv = 1;
-        _$_Z = _$Qv;
-        _$Qv = "";
-        _$VZ = _$Qv;
-        _$Qv = _$LZ;
-        _$_Z = _$Qv;
-        _$Qv = 249856;
-        _$Wv = 446464;
-        _$Yv = 454656;
-        _$Ov = 409600;
-        _$Pv = 479232;
-        _$Gv = 442368;
-        _$Zv = 413696;
-        _$Ev = 241664;
-        _$_v = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev];
-        _$LZ = _$_v;
-        for (_$qZ = 0; _$qZ < _$LZ.length; _$qZ++) {
-            _$Qv = _$VZ;
-            _$Wv = _$LZ;
-            _$Yv = _$qZ;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 12;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$VZ = _$Ev;
-        }
-        _$Qv = _$LZ;
-        _$Wv = "push";
-        _$Yv = _$_Z;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$LZ = _$Ov;
-        _$Qv = "zw";
-        _$HZ = _$Qv;
-        _$Wv = 1;
-        _$xZ = _$Wv;
-        _$Qv = _$xZ;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$xZ = _$Yv;
-        _$Qv = 1;
-        _$HZ = _$Qv;
-        _$Qv = "";
-        _$BZ = _$Qv;
-        _$Qv = _$xZ;
-        _$HZ = _$Qv;
-        _$Qv = 107520;
-        _$Wv = 112640;
-        _$Yv = 102400;
-        _$Ov = 103424;
-        _$Pv = 122880;
-        _$Gv = 80896;
-        _$Zv = 104448;
-        _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-        _$xZ = _$Ev;
-        for (_$XZ = 0; _$XZ < _$xZ.length; _$XZ++) {
-            _$Qv = _$BZ;
-            _$Wv = _$xZ;
-            _$Yv = _$XZ;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 10;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$BZ = _$Ev;
-        }
-        _$Qv = _$xZ;
-        _$Wv = "push";
-        _$Yv = _$HZ;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$xZ = _$Ov;
-        _$Qv = "QZw";
-        _$FZ = _$Qv;
-        _$Wv = 1;
-        _$JZ = _$Wv;
-        _$Qv = _$JZ;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$JZ = _$Yv;
-        _$Qv = 1;
-        _$FZ = _$Qv;
-        _$Qv = "";
-        _$$Z = _$Qv;
-        _$Qv = _$JZ;
-        _$FZ = _$Qv;
-        _$Qv = 999424;
-        _$Wv = 1785856;
-        _$Yv = 1818624;
-        _$Ov = 1638400;
-        _$Pv = 1916928;
-        _$Gv = 1769472;
-        _$Zv = 1654784;
-        _$Ev = 720896;
-        _$_v = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev];
-        _$JZ = _$_v;
-        for (_$az = 0; _$az < _$JZ.length; _$az++) {
-            _$Qv = _$$Z;
-            _$Wv = _$JZ;
-            _$Yv = _$az;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 14;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$$Z = _$Ev;
-        }
-        _$Qv = _$JZ;
-        _$Wv = "push";
-        _$Yv = _$FZ;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$JZ = _$Ov;
-        _$Qv = "S$";
-        _$ez = _$Qv;
-        _$Wv = 1;
-        _$rz = _$Wv;
-        _$Qv = _$rz;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$rz = _$Yv;
-        _$Qv = 1;
-        _$ez = _$Qv;
-        _$Qv = "";
-        _$cz = _$Qv;
-        _$Qv = _$rz;
-        _$ez = _$Qv;
-        _$Qv = 3360;
-        _$Wv = 3520;
-        _$Yv = 3200;
-        _$Ov = 3232;
-        _$Pv = 3840;
-        _$Gv = 2528;
-        _$Zv = 3264;
-        _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-        _$rz = _$Ev;
-        for (_$vz = 0; _$vz < _$rz.length; _$vz++) {
-            _$Qv = _$cz;
-            _$Wv = _$rz;
-            _$Yv = _$vz;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 5;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$cz = _$Ev;
-        }
-        _$Qv = _$rz;
-        _$Wv = "push";
-        _$Yv = _$ez;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$rz = _$Ov;
-        _$Qv = _$RZ;
-        _$Wv = _$cz;
-        _$Yv = _$$Z;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$Pv = 1;
-        _$Gv = -_$Pv;
-        _$Zv = _$Ov == _$Gv;
-        _$Ev = _$Zv;
-        if (_$Ev) {
-            _$ks = _$RZ;
-            _$Ns = _$BZ;
-            _$Hs = _$VZ;
-            _$xs = _$ks[_$Ns](_$Hs);
-            _$wf = 1;
-            _$df = -_$wf;
-            _$Ev = _$xs == _$df;
-        }
-        if (_$Ev) {
+        _$TZ = _$BW["toString"]();
+        _$Yv = _$oU["toString"]();
+        if (_$Yv["indexOf"]("=module,") == -1 && _$Yv["indexOf"]("=module") == -1) {
             _$TZ = 0;
         }
-        _$Qv = _$TZ;
-        if (_$Qv) {
+        if (_$TZ) {
             _$Qv = 1;
             _$sz = _$Qv;
             _$Wv = 0;
@@ -13850,43 +12178,7 @@ _$a = function () {
             _$Yv = _$Qv ^ _$Wv;
             _$IW = _$Yv;
         }
-        _$Qv = "Wm";
-        _$oz = _$Qv;
-        _$Wv = 1;
-        _$kz = _$Wv;
-        _$Qv = _$kz;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$kz = _$Yv;
-        _$Qv = 1;
-        _$oz = _$Qv;
-        _$Qv = "";
-        _$bz = _$Qv;
-        _$Qv = _$kz;
-        _$oz = _$Qv;
-        _$Qv = 454656;
-        _$Wv = 401408;
-        _$Yv = 434176;
-        _$Ov = 413696;
-        _$Pv = 405504;
-        _$Gv = 475136;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$kz = _$Zv;
-        for (_$lz = 0; _$lz < _$kz.length; _$lz++) {
-            _$Qv = _$bz;
-            _$Wv = _$kz;
-            _$Yv = _$lz;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 12;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$bz = _$Ev;
-        }
-        _$Qv = _$kz;
-        _$Wv = "push";
-        _$Yv = _$oz;
-        _$Ov = _$Qv[_$Wv](_$Yv);
+        _$bz = "object";
         _$kz = _$Ov;
         _$Qv = "=293;4" + "23.1" + "12";
         _$Iz = _$Qv;
@@ -14201,56 +12493,7 @@ _$a = function () {
         _$Yv = _$Pz;
         _$Ov = _$Qv[_$Wv](_$Yv);
         _$Gz = _$Ov;
-        _$Qv = "w6";
-        _$zz = _$Qv;
-        _$Wv = 1;
-        _$Ez = _$Wv;
-        _$Qv = _$Ez;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$Ez = _$Yv;
-        _$Qv = 1;
-        _$zz = _$Qv;
-        _$Qv = "";
-        _$Rz = _$Qv;
-        _$Qv = _$Ez;
-        _$zz = _$Qv;
-        _$Qv = 9216;
-        _$Wv = 10752;
-        _$Yv = 9856;
-        _$Ov = 9728;
-        _$Pv = 8960;
-        _$Gv = 14592;
-        _$Zv = 12416;
-        _$Ev = 13952;
-        _$_v = 12928;
-        _$Vv = 10624;
-        _$qv = 12928;
-        _$Hv = 14848;
-        _$xv = 8832;
-        _$Bv = 13824;
-        _$Xv = 12928;
-        _$Fv = 13952;
-        _$$v = 12928;
-        _$es = 14080;
-        _$ts = 14848;
-        _$ds = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv, _$Xv, _$Fv, _$$v, _$es, _$ts];
-        _$Ez = _$ds;
-        for (_$_z = 0; _$_z < _$Ez.length; _$_z++) {
-            _$Qv = _$Rz;
-            _$Wv = _$Ez;
-            _$Yv = _$_z;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 7;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$Rz = _$Ev;
-        }
-        _$Qv = _$Ez;
-        _$Wv = "push";
-        _$Yv = _$zz;
-        _$Ov = _$Qv[_$Wv](_$Yv);
+        _$Rz = "HTMLFrameSetElement";
         _$Ez = _$Ov;
         _$Qv = _$BW;
         _$Wv = _$Rz;
@@ -14258,51 +12501,9 @@ _$a = function () {
         _$Ov = _$Nz;
         _$Pv = _$Yv === _$Ov;
         _$Lz = _$Pv;
-        _$Gv = "Fge";
-        _$Vz = _$Gv;
-        _$Zv = 1;
-        _$qz = _$Zv;
-        _$Qv = _$qz;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$qz = _$Yv;
-        _$Qv = 1;
-        _$Vz = _$Qv;
-        _$Qv = "";
-        _$Hz = _$Qv;
-        _$Qv = _$qz;
-        _$Vz = _$Qv;
-        _$Qv = 4325376;
-        _$Wv = 7667712;
-        _$Yv = 6684672;
-        _$Ov = 6684672;
-        _$Pv = 6619136;
-        _$Gv = 7471104;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$qz = _$Zv;
-        for (_$xz = 0; _$xz < _$qz.length; _$xz++) {
-            _$Qv = _$Hz;
-            _$Wv = _$qz;
-            _$Yv = _$xz;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 16;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$Hz = _$Ev;
-        }
-        _$Qv = _$qz;
-        _$Wv = "push";
-        _$Yv = _$Vz;
-        _$Ov = _$Qv[_$Wv](_$Yv);
+        _$Hz = "Buffer"
         _$qz = _$Ov;
-        _$Qv = _$Oz;
-        _$Wv = _$Hz;
-        _$Yv = _$Qv[_$Wv];
-        _$Ov = !_$Yv;
-        _$Bz = _$Ov;
-        _$Qv = _$Bz;
-        if (_$Qv) {
+        if (!_$Oz["Buffer"]) {
             _$Qv = 1;
             _$Xz = _$Qv;
             _$Wv = 0;
@@ -14345,10 +12546,7 @@ _$a = function () {
             _$Wv = _$aE;
             _$Yv = _$Qv ^ _$Wv;
             _$oY = _$Yv;
-        }
-        _$Qv = _$Bz;
-        _$Wv = !_$Qv;
-        if (_$Wv) {
+        }else{
             _$Qv = 23;
             _$Wv = 66;
             _$Yv = _$Qv + _$Wv;
@@ -14394,9 +12592,7 @@ _$a = function () {
             _$Yv = _$Qv ^ _$Wv;
             _$oY = _$Yv;
         }
-        _$Qv = _$TZ;
         _$Wv = !_$TZ;
-        console.log("sajdkasdsadas, _$Wv:", _$Wv, " _$IW: ", _$IW, " _$Qv", _$Qv, " _$TZ: ", _$TZ)
         if (_$Wv) {
             _$Qv = 20;
             _$Wv = 66;
@@ -16442,669 +14638,27 @@ _$a = function () {
         _$Gv = _$MY[_$Pv];
         _$Zv = _$Yv ^ _$Gv;
         _$IY["push"](_$Zv);
-
-        console.log("_$IY5: _$IW(55): ", _$IW, " _$oY(54): ", _$oY, " _$Pv(9): ", _$Pv);
         _$pL = typeof _$Qv["CDATASection"] === "object";
         _$Pv = _$wY++;
         _$IY["push"](_$IW ^ _$MY[_$Pv]);
         _$Pv = _$wY++;
         _$IY["push"](_$oY ^ _$MY[_$Pv]);
-        console.log("_$IY: ", _$IY);
-        _$Qv = 0;
-        _$yL = _$Qv;
+        _$yL = 0;
         _$Wv = arguments;
-        _$wL = _$Wv;
-        _$Yv = "OC";
-        _$dL = _$Yv;
-        _$Ov = 1;
-        _$ML = _$Ov;
-        _$Qv = _$ML;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$ML = _$Yv;
-        _$Qv = 1;
-        _$dL = _$Qv;
-        _$Qv = "";
-        _$IL = _$Qv;
-        _$Qv = _$ML;
-        _$dL = _$Qv;
-        _$Qv = 12672;
-        _$Wv = 12416;
-        _$Yv = 13824;
-        _$Ov = 13824;
-        _$Pv = 12928;
-        _$Gv = 12928;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$ML = _$Zv;
-        for (_$AL = 0; _$AL < _$ML.length; _$AL++) {
-            _$Qv = _$IL;
-            _$Wv = _$ML;
-            _$Yv = _$AL;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 7;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$IL = _$Ev;
+        _$wL = arguments;
+        if (arguments) {
+            _$wL = arguments["callee"]["toString"]();
+            // 检测function _$vU.toString()
+            _$wL = "function _$vU(){arguments}"
         }
-        _$Qv = _$ML;
-        _$Wv = "push";
-        _$Yv = _$dL;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$ML = _$Ov;
-        _$Qv = _$IL;
-        _$SL = _$Qv;
-        _$Qv = _$wL;
-        if (_$Qv) {
-            _$Qv = _$wL;
-            _$Wv = _$SL;
-            _$Yv = _$Qv[_$Wv];
-            _$wL = _$Yv;
+        _$Wv = _$wL;
+        if (_$wL["indexOf"]("arguments") != -1 && _$wL["indexOf"]("\n") == -1 && _$wL["indexOf"]("arguments") != -1){
+            _$yL = _$wL["length"];
         }
-        _$Qv = "PX";
-        _$mL = _$Qv;
-        _$Wv = 1;
-        _$TL = _$Wv;
-        _$Qv = _$TL;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$TL = _$Yv;
-        _$Qv = 1;
-        _$mL = _$Qv;
-        _$Qv = "";
-        _$jL = _$Qv;
-        _$Qv = _$TL;
-        _$mL = _$Qv;
-        _$Qv = 928;
-        _$Wv = 888;
-        _$Yv = 664;
-        _$Ov = 928;
-        _$Pv = 912;
-        _$Gv = 840;
-        _$Zv = 880;
-        _$Ev = 824;
-        _$_v = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev];
-        _$TL = _$_v;
-        for (_$CL = 0; _$CL < _$TL.length; _$CL++) {
-            _$Qv = _$jL;
-            _$Wv = _$TL;
-            _$Yv = _$CL;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 3;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$jL = _$Ev;
-        }
-        _$Qv = _$TL;
-        _$Wv = "push";
-        _$Yv = _$mL;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$TL = _$Ov;
-        _$Qv = _$jL;
-        _$SL = _$Qv;
-        _$Qv = _$wL;
-        if (_$Qv) {
-            _$Qv = _$wL;
-            _$Wv = _$SL;
-            _$Yv = _$Qv[_$Wv]();
-            _$wL = _$Yv;
-        }
-        _$Qv = "PfX";
-        _$DL = _$Qv;
-        _$Wv = 1;
-        _$KL = _$Wv;
-        _$Qv = _$KL;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$KL = _$Yv;
-        _$Qv = 1;
-        _$DL = _$Qv;
-        _$Qv = "";
-        _$QL = _$Qv;
-        _$Qv = _$KL;
-        _$DL = _$Qv;
-        _$Qv = 860160;
-        _$Wv = 901120;
-        _$Yv = 819200;
-        _$Ov = 827392;
-        _$Pv = 983040;
-        _$Gv = 647168;
-        _$Zv = 835584;
-        _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-        _$KL = _$Ev;
-        for (_$WL = 0; _$WL < _$KL.length; _$WL++) {
-            _$Qv = _$QL;
-            _$Wv = _$KL;
-            _$Yv = _$WL;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 13;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$QL = _$Ev;
-        }
-        _$Qv = _$KL;
-        _$Wv = "push";
-        _$Yv = _$DL;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$KL = _$Ov;
-        _$Qv = "vN8";
-        _$YL = _$Qv;
-        _$Wv = 1;
-        _$UL = _$Wv;
-        _$Qv = _$UL;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$UL = _$Yv;
-        _$Qv = 1;
-        _$YL = _$Qv;
-        _$Qv = "";
-        _$OL = _$Qv;
-        _$Qv = _$UL;
-        _$YL = _$Qv;
-        _$Qv = 49664;
-        _$Wv = 58368;
-        _$Yv = 52736;
-        _$Ov = 59904;
-        _$Pv = 55808;
-        _$Gv = 51712;
-        _$Zv = 56320;
-        _$Ev = 59392;
-        _$_v = 58880;
-        _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-        _$UL = _$Vv;
-        for (_$PL = 0; _$PL < _$UL.length; _$PL++) {
-            _$Qv = _$OL;
-            _$Wv = _$UL;
-            _$Yv = _$PL;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 9;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$OL = _$Ev;
-        }
-        _$Qv = _$UL;
-        _$Wv = "push";
-        _$Yv = _$YL;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$UL = _$Ov;
-        _$Qv = "H9m";
-        _$GL = _$Qv;
-        _$Wv = 1;
-        _$NL = _$Wv;
-        _$Qv = _$NL;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$NL = _$Yv;
-        _$Qv = 1;
-        _$GL = _$Qv;
-        _$Qv = "";
-        _$ZL = _$Qv;
-        _$Qv = _$NL;
-        _$GL = _$Qv;
-        _$Qv = 24832;
-        _$Wv = 29184;
-        _$Yv = 26368;
-        _$Ov = 29952;
-        _$Pv = 27904;
-        _$Gv = 25856;
-        _$Zv = 28160;
-        _$Ev = 29696;
-        _$_v = 29440;
-        _$Vv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v];
-        _$NL = _$Vv;
-        for (_$zL = 0; _$zL < _$NL.length; _$zL++) {
-            _$Qv = _$ZL;
-            _$Wv = _$NL;
-            _$Yv = _$zL;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 8;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$ZL = _$Ev;
-        }
-        _$Qv = _$NL;
-        _$Wv = "push";
-        _$Yv = _$GL;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$NL = _$Ov;
-        _$Qv = "vB";
-        _$EL = _$Qv;
-        _$Wv = 1;
-        _$RL = _$Wv;
-        _$Qv = _$RL;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$RL = _$Yv;
-        _$Qv = 1;
-        _$EL = _$Qv;
-        _$Qv = "";
-        _$_L = _$Qv;
-        _$Qv = _$RL;
-        _$EL = _$Qv;
-        _$Qv = 13440;
-        _$Wv = 14080;
-        _$Yv = 12800;
-        _$Ov = 12928;
-        _$Pv = 15360;
-        _$Gv = 10112;
-        _$Zv = 13056;
-        _$Ev = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv];
-        _$RL = _$Ev;
-        for (_$LL = 0; _$LL < _$RL.length; _$LL++) {
-            _$Qv = _$_L;
-            _$Wv = _$RL;
-            _$Yv = _$LL;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 7;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$_L = _$Ev;
-        }
-        _$Qv = _$RL;
-        _$Wv = "push";
-        _$Yv = _$EL;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$RL = _$Ov;
-        _$Qv = "1343" + ">3=3" + "/491<" + "3";
-        _$$L = _$Qv;
-        _$Qv = _$$L;
-        _$Wv = "length";
-        _$Yv = _$Qv[_$Wv];
-        _$VL = _$Yv;
+        _$wV = typeof _$Qv["CDATASection"] === "object";
         _$Qv = [];
-        _$aV = _$Qv;
-        for (_$eV = 0; _$eV < _$VL; _$eV++) {
-            _$Qv = _$$L;
-            _$Wv = "charCodeAt";
-            _$Yv = _$eV;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$qL = _$Ov;
-            _$Qv = _$qL;
-            _$Wv = 65536;
-            _$Yv = _$Qv >= _$Wv;
-            _$Ov = _$Yv;
-            if (_$Ov) {
-                _$ks = _$qL;
-                _$Ns = 1114111;
-                _$Ov = _$ks <= _$Ns;
-            }
-            if (_$Ov) {
-                _$Qv = _$aV;
-                _$Wv = "push";
-                _$Yv = _$qL;
-                _$Ov = 18;
-                _$Pv = _$Yv >> _$Ov;
-                _$Gv = 7;
-                _$Zv = _$Pv & _$Gv;
-                _$Ev = 240;
-                _$_v = _$Zv | _$Ev;
-                _$Qv[_$Wv](_$_v);
-                _$Qv = _$aV;
-                _$Wv = "push";
-                _$Yv = _$qL;
-                _$Ov = 12;
-                _$Pv = _$Yv >> _$Ov;
-                _$Gv = 63;
-                _$Zv = _$Pv & _$Gv;
-                _$Ev = 128;
-                _$_v = _$Zv | _$Ev;
-                _$Qv[_$Wv](_$_v);
-                _$Qv = _$aV;
-                _$Wv = "push";
-                _$Yv = _$qL;
-                _$Ov = 6;
-                _$Pv = _$Yv >> _$Ov;
-                _$Gv = 63;
-                _$Zv = _$Pv & _$Gv;
-                _$Ev = 128;
-                _$_v = _$Zv | _$Ev;
-                _$Qv[_$Wv](_$_v);
-                _$Qv = _$aV;
-                _$Wv = "push";
-                _$Yv = _$qL;
-                _$Ov = 63;
-                _$Pv = _$Yv & _$Ov;
-                _$Gv = 128;
-                _$Zv = _$Pv | _$Gv;
-                _$Qv[_$Wv](_$Zv);
-            } else {
-                _$Qv = _$qL;
-                _$Wv = 2048;
-                _$Yv = _$Qv >= _$Wv;
-                _$Ov = _$Yv;
-                if (_$Ov) {
-                    _$ks = _$qL;
-                    _$Ns = 65535;
-                    _$Ov = _$ks <= _$Ns;
-                }
-                if (_$Ov) {
-                    _$Qv = _$aV;
-                    _$Wv = "push";
-                    _$Yv = _$qL;
-                    _$Ov = 12;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 15;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 224;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$aV;
-                    _$Wv = "push";
-                    _$Yv = _$qL;
-                    _$Ov = 6;
-                    _$Pv = _$Yv >> _$Ov;
-                    _$Gv = 63;
-                    _$Zv = _$Pv & _$Gv;
-                    _$Ev = 128;
-                    _$_v = _$Zv | _$Ev;
-                    _$Qv[_$Wv](_$_v);
-                    _$Qv = _$aV;
-                    _$Wv = "push";
-                    _$Yv = _$qL;
-                    _$Ov = 63;
-                    _$Pv = _$Yv & _$Ov;
-                    _$Gv = 128;
-                    _$Zv = _$Pv | _$Gv;
-                    _$Qv[_$Wv](_$Zv);
-                } else {
-                    _$Qv = _$qL;
-                    _$Wv = 128;
-                    _$Yv = _$Qv >= _$Wv;
-                    _$Ov = _$Yv;
-                    if (_$Ov) {
-                        _$ks = _$qL;
-                        _$Ns = 2047;
-                        _$Ov = _$ks <= _$Ns;
-                    }
-                    if (_$Ov) {
-                        _$Qv = _$aV;
-                        _$Wv = "push";
-                        _$Yv = _$qL;
-                        _$Ov = 6;
-                        _$Pv = _$Yv >> _$Ov;
-                        _$Gv = 31;
-                        _$Zv = _$Pv & _$Gv;
-                        _$Ev = 192;
-                        _$_v = _$Zv | _$Ev;
-                        _$Qv[_$Wv](_$_v);
-                        _$Qv = _$aV;
-                        _$Wv = "push";
-                        _$Yv = _$qL;
-                        _$Ov = 63;
-                        _$Pv = _$Yv & _$Ov;
-                        _$Gv = 128;
-                        _$Zv = _$Pv | _$Gv;
-                        _$Qv[_$Wv](_$Zv);
-                    } else {
-                        _$Qv = _$aV;
-                        _$Wv = "push";
-                        _$Yv = _$qL;
-                        _$Ov = 255;
-                        _$Pv = _$Yv & _$Ov;
-                        _$Qv[_$Wv](_$Pv);
-                    }
-                }
-            }
-        }
-        _$Qv = _$aV;
-        _$Wv = "length";
-        _$Yv = _$Qv[_$Wv];
-        _$HL = _$Yv;
-        _$Qv = _$HL;
-        _$Wv = 2;
-        _$Yv = _$Qv / _$Wv;
-        _$HL = _$Yv;
-        _$Qv = [];
-        _$rV = _$Qv;
-        _$Qv = 0;
-        _$xL = _$Qv;
-        for (_$cV = 0; _$cV < _$HL; _$cV++) {
-            _$Qv = _$aV;
-            _$Wv = _$xL;
-            _$Yv = _$Qv[_$Wv];
-            _$FL = _$Yv;
-            _$Qv = _$aV;
-            _$Wv = _$xL;
-            _$Yv = 1;
-            _$Ov = _$Wv + _$Yv;
-            _$Pv = _$Qv[_$Ov];
-            _$JL = _$Pv;
-            _$Qv = _$xL;
-            _$Wv = 2;
-            _$Yv = _$Qv + _$Wv;
-            _$xL = _$Yv;
-            _$Qv = _$FL;
-            _$Wv = 46;
-            _$Yv = _$Qv - _$Wv;
-            _$FL = _$Yv;
-            _$Qv = _$JL;
-            _$Wv = 46;
-            _$Yv = _$Qv - _$Wv;
-            _$JL = _$Yv;
-            _$Qv = _$JL;
-            _$Wv = 19;
-            _$Yv = _$Qv * _$Wv;
-            _$Ov = _$FL;
-            _$Pv = _$Yv + _$Ov;
-            _$XL = _$Pv;
-            _$Qv = _$XL;
-            _$Wv = 11;
-            _$Yv = _$Qv ^ _$Wv;
-            _$BL = _$Yv;
-            _$Qv = _$rV;
-            _$Wv = _$cV;
-            _$Yv = _$BL;
-            _$Qv[_$Wv] = _$Yv;
-        }
-        _$Qv = "";
-        _$vV = _$Qv;
-        for (_$iV = 0; _$iV < _$rV.length; _$iV++) {
-            _$Qv = _$rV;
-            _$Wv = _$iV;
-            _$Yv = _$Qv[_$Wv];
-            _$Ov = "toStri" + "ng";
-            _$Pv = 2;
-            _$Gv = _$Yv[_$Ov](_$Pv);
-            _$sV = _$Gv;
-            _$Qv = _$sV;
-            _$Wv = "match";
-            _$Yv = /^1+?(?=0)/;
-            _$Ov = _$Qv[_$Wv](_$Yv);
-            _$nV = _$Ov;
-            _$Qv = _$nV;
-            _$Wv = _$Qv;
-            if (_$Wv) {
-                _$ks = _$sV;
-                _$Ns = "length";
-                _$Hs = _$ks[_$Ns];
-                _$xs = 8;
-                _$Wv = _$Hs === _$xs;
-            }
-            if (_$Wv) {
-                _$Qv = _$nV;
-                _$Wv = 0;
-                _$Yv = _$Qv[_$Wv];
-                _$Ov = "length";
-                _$Pv = _$Yv[_$Ov];
-                _$fV = _$Pv;
-                _$Qv = _$rV;
-                _$Wv = _$iV;
-                _$Yv = _$Qv[_$Wv];
-                _$Ov = "toStri" + "ng";
-                _$Pv = 2;
-                _$Gv = _$Yv[_$Ov](_$Pv);
-                _$Zv = "slice";
-                _$Ev = 7;
-                _$_v = _$fV;
-                _$Vv = _$Ev - _$_v;
-                _$qv = _$Gv[_$Zv](_$Vv);
-                _$tV = _$qv;
-                for (_$oV = 0; _$oV < _$fV; _$oV++) {
-                    _$Qv = _$rV;
-                    _$Wv = _$oV;
-                    _$Yv = _$iV;
-                    _$Ov = _$Wv + _$Yv;
-                    _$Pv = _$Qv[_$Ov];
-                    _$Gv = "toSt" + "ring";
-                    _$Zv = 2;
-                    _$Ev = _$Pv[_$Gv](_$Zv);
-                    _$_v = "slice";
-                    _$Vv = 2;
-                    _$qv = _$Ev[_$_v](_$Vv);
-                    _$tV += _$qv;
-                }
-                _$Qv = _$tV;
-                _$Wv = 2;
-                _$Yv = parseInt(_$Qv, _$Wv);
-                _$Ov = String.fromCharCode(_$Yv);
-                _$vV += _$Ov;
-                _$Qv = _$fV;
-                _$Wv = 1;
-                _$Yv = _$Qv - _$Wv;
-                _$iV += _$Yv;
-            } else {
-                _$Qv = _$rV;
-                _$Wv = _$iV;
-                _$Yv = _$Qv[_$Wv];
-                _$Ov = String.fromCharCode(_$Yv);
-                _$vV += _$Ov;
-            }
-        }
-        _$Qv = _$wL;
-        _$Wv = _$Qv;
-        if (_$Wv) {
-            _$ks = _$wL;
-            _$Ns = _$vV;
-            _$Hs = _$ZL;
-            _$xs = _$ks[_$Ns](_$Hs);
-            _$wf = 1;
-            _$df = -_$wf;
-            _$Wv = _$xs != _$df;
-        }
-        _$Yv = _$Wv;
-        if (_$Yv) {
-            _$Mf = _$wL;
-            _$If = _$QL;
-            _$Af = 10;
-            _$Sf = String.fromCharCode(_$Af);
-            _$mf = _$Mf[_$If](_$Sf);
-            _$Tf = 1;
-            _$jf = -_$Tf;
-            _$Yv = _$mf == _$jf;
-        }
-        _$Ov = _$Yv;
-        if (_$Ov) {
-            _$Cf = _$wL;
-            _$Df = _$_L;
-            _$Kf = _$OL;
-            _$Qf = _$Cf[_$Df](_$Kf);
-            _$Wf = 1;
-            _$Yf = -_$Wf;
-            _$Ov = _$Qf != _$Yf;
-        }
-        if (_$Ov) {
-            _$Qv = _$wL;
-            _$Wv = "length";
-            _$Yv = _$Qv[_$Wv];
-            _$yL = _$Yv;
-        }
-        _$Qv = "p9";
-        _$kV = _$Qv;
-        _$Wv = 1;
-        _$bV = _$Wv;
-        _$Qv = _$bV;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$bV = _$Yv;
-        _$Qv = 1;
-        _$kV = _$Qv;
-        _$Qv = "";
-        _$lV = _$Qv;
-        _$Qv = _$bV;
-        _$kV = _$Qv;
-        _$Qv = 536;
-        _$Wv = 544;
-        _$Yv = 520;
-        _$Ov = 672;
-        _$Pv = 520;
-        _$Gv = 664;
-        _$Zv = 808;
-        _$Ev = 792;
-        _$_v = 928;
-        _$Vv = 840;
-        _$qv = 888;
-        _$Hv = 880;
-        _$xv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv];
-        _$bV = _$xv;
-        for (_$hV = 0; _$hV < _$bV.length; _$hV++) {
-            _$Qv = _$lV;
-            _$Wv = _$bV;
-            _$Yv = _$hV;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 3;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$lV = _$Ev;
-        }
-        _$Qv = _$bV;
-        _$Wv = "push";
-        _$Yv = _$kV;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$bV = _$Ov;
-        _$Qv = "Sf$";
-        _$gV = _$Qv;
-        _$Wv = 1;
-        _$uV = _$Wv;
-        _$Qv = _$uV;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$uV = _$Yv;
-        _$Qv = 1;
-        _$gV = _$Qv;
-        _$Qv = "";
-        _$pV = _$Qv;
-        _$Qv = _$uV;
-        _$gV = _$Qv;
-        _$Qv = 1818624;
-        _$Wv = 1605632;
-        _$Yv = 1736704;
-        _$Ov = 1654784;
-        _$Pv = 1622016;
-        _$Gv = 1900544;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$uV = _$Zv;
-        for (_$yV = 0; _$yV < _$uV.length; _$yV++) {
-            _$Qv = _$pV;
-            _$Wv = _$uV;
-            _$Yv = _$yV;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 14;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$pV = _$Ev;
-        }
-        _$Qv = _$uV;
-        _$Wv = "push";
-        _$Yv = _$gV;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$uV = _$Ov;
-        _$Qv = _$BW;
-        _$Wv = _$lV;
-        _$Yv = typeof _$Qv[_$Wv];
-        _$Ov = _$pV;
-        _$Pv = _$Yv === _$Ov;
-        _$wV = _$Pv;
-        _$Qv = [];
-        _$rY = _$Qv;
-        _$Qv = _$yL;
-        if (_$Qv) {
+        _$rY = [];
+        if (_$yL) {
             for (_$dV = 0; _$dV < 5; _$dV++) {
                 _$Qv = 1;
                 _$MV = _$Qv;
@@ -17140,111 +14694,14 @@ _$a = function () {
                 _$Hv = _$MV;
                 _$xv = _$qv + _$Hv;
                 _$SV = _$xv;
-                _$Qv = _$rY;
-                _$Wv = "push";
-                _$Yv = _$IV;
-                _$Ov = _$SV;
-                _$Pv = _$Yv | _$Ov;
-                _$Qv[_$Wv](_$Pv);
+                _$rY["push"](_$IV | _$SV);
             }
         }
-        _$Qv = "NtP";
-        _$mV = _$Qv;
-        _$Wv = 1;
-        _$TV = _$Wv;
-        _$Qv = _$TV;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$TV = _$Yv;
-        _$Qv = 1;
-        _$mV = _$Qv;
-        _$Qv = "";
-        _$jV = _$Qv;
-        _$Qv = _$TV;
-        _$mV = _$Qv;
-        _$Qv = 7104;
-        _$Wv = 6272;
-        _$Yv = 6784;
-        _$Ov = 6464;
-        _$Pv = 6336;
-        _$Gv = 7424;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$TV = _$Zv;
-        for (_$CV = 0; _$CV < _$TV.length; _$CV++) {
-            _$Qv = _$jV;
-            _$Wv = _$TV;
-            _$Yv = _$CV;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 6;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$jV = _$Ev;
-        }
-        _$Qv = _$TV;
-        _$Wv = "push";
-        _$Yv = _$mV;
-        _$Ov = _$Qv[_$Wv](_$Yv);
         _$TV = _$Ov;
-        _$Qv = "nL";
-        _$DV = _$Qv;
-        _$Wv = 1;
-        _$KV = _$Wv;
-        _$Qv = _$KV;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$KV = _$Yv;
-        _$Qv = 1;
-        _$DV = _$Qv;
-        _$Qv = "";
-        _$QV = _$Qv;
-        _$Qv = _$KV;
-        _$DV = _$Qv;
-        _$Qv = 339968;
-        _$Wv = 352256;
-        _$Yv = 290816;
-        _$Ov = 290816;
-        _$Pv = 466944;
-        _$Gv = 397312;
-        _$Zv = 458752;
-        _$Ev = 425984;
-        _$_v = 430080;
-        _$Vv = 405504;
-        _$qv = 471040;
-        _$Hv = 282624;
-        _$xv = 442368;
-        _$Bv = 413696;
-        _$Xv = 446464;
-        _$Fv = 413696;
-        _$$v = 450560;
-        _$es = 475136;
-        _$ts = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv, _$Xv, _$Fv, _$$v, _$es];
-        _$KV = _$ts;
-        for (_$WV = 0; _$WV < _$KV.length; _$WV++) {
-            _$Qv = _$QV;
-            _$Wv = _$KV;
-            _$Yv = _$WV;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 12;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$QV = _$Ev;
-        }
-        _$Qv = _$KV;
-        _$Wv = "push";
-        _$Yv = _$DV;
-        _$Ov = _$Qv[_$Wv](_$Yv);
         _$KV = _$Ov;
-        _$Qv = _$BW;
-        _$Wv = _$QV;
-        _$Yv = typeof _$Qv[_$Wv];
-        _$Ov = _$jV;
-        _$Pv = _$Yv === _$Ov;
+        _$Pv = typeof _$Qv[_$BW] === "object";
         _$wV = _$Pv;
-        _$Qv = _$yL;
-        _$Wv = !_$Qv;
-        if (_$Wv) {
+        if (!_$yL) {
             for (_$dV = 0; _$dV < 5; _$dV++) {
                 _$Qv = 16;
                 _$YV = _$Qv;
@@ -17280,78 +14737,22 @@ _$a = function () {
                 _$Hv = _$YV;
                 _$xv = _$qv + _$Hv;
                 _$PV = _$xv;
-                _$Qv = _$rY;
-                _$Wv = "push";
-                _$Yv = _$UV;
-                _$Ov = _$PV;
-                _$Pv = _$Yv | _$Ov;
-                _$Qv[_$Wv](_$Pv);
+                _$rY["push"](_$UV | _$PV);
             }
         }
         _$OY = [_$jY[0], _$iY[1], _$mY[2], _$gW[3], _$UY[4], _$sY[5]];
-        console.log("_$OY: ==> ", _$OY);
-        console.log("_$OY: _$IY ==> ", _$IY);
-        console.log("_$OY: _$MY ==> ", _$MY);
-        console.log("_$OY: _$rY ==> ", _$rY);
-        console.log("_$OY: _$uY ==> ", _$uY);
-        console.log("_$OY: _$GW ==> ", _$GW);
         _$Qv = _$yW;
         _$ZV = _$Qv;
-        _$Wv = 0;
-        _$zV = _$Wv;
-        _$Yv = "Szn";
-        _$EV = _$Yv;
-        _$Ov = 1;
-        _$RV = _$Ov;
-        _$Qv = _$RV;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$RV = _$Yv;
-        _$Qv = 1;
-        _$EV = _$Qv;
-        _$Qv = "";
-        _$_V = _$Qv;
-        _$Qv = _$RV;
-        _$EV = _$Qv;
-        _$Qv = 114688;
-        _$Wv = 99328;
-        _$Yv = 116736;
-        _$Ov = 103424;
-        _$Pv = 112640;
-        _$Gv = 118784;
-        _$Zv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv];
-        _$RV = _$Zv;
-        for (_$LV = 0; _$LV < _$RV.length; _$LV++) {
-            _$Qv = _$_V;
-            _$Wv = _$RV;
-            _$Yv = _$LV;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 10;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$_V = _$Ev;
-        }
-        _$Qv = _$RV;
-        _$Wv = "push";
-        _$Yv = _$EV;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$RV = _$Ov;
-        _$Qv = _$_V;
-        _$VV = _$Qv;
+
+        _$zV = 0;
         for (var _$fx in _$ZV) {
-            _$Qv = _$fx;
-            _$Wv = _$VV;
-            _$Yv = _$Qv == _$Wv;
-            if (_$Yv) {
-                _$Qv = 5;
-                _$zV = _$Qv;
+            if (_$fx == "parent") {
+                _$zV = 5;
             }
         }
-        _$Qv = [];
-        _$GW = _$Qv;
+        _$GW = [];
         _$Qv = _$zV;
-        if (_$Qv) {
+        if (_$zV) {
             for (_$qV = 0; _$qV < 5; _$qV++) {
                 _$Qv = 2;
                 _$HV = _$Qv;
@@ -17396,10 +14797,7 @@ _$a = function () {
                 _$Pv = _$Yv ^ _$Ov;
                 _$Qv[_$Wv](_$Pv);
             }
-        }
-        _$Qv = _$zV;
-        _$Wv = !_$Qv;
-        if (_$Wv) {
+        }else {
             for (_$qV = 0; _$qV < 5; _$qV++) {
                 _$Qv = 17;
                 _$JV = _$Qv;
@@ -17604,163 +15002,13 @@ _$a = function () {
         _$Qv = _$uq;
         _$yq = _$Qv;
         _$Qv = [];
-        _$uY = _$Qv;
-        _$Qv = "Tb";
-        _$wq = _$Qv;
-        _$Wv = 1;
-        _$dq = _$Wv;
-        _$Qv = _$dq;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$dq = _$Yv;
-        _$Qv = 1;
-        _$wq = _$Qv;
-        _$Qv = "";
-        _$Mq = _$Qv;
-        _$Qv = _$dq;
-        _$wq = _$Qv;
-        _$Qv = 6656;
-        _$Wv = 6208;
-        _$Yv = 7360;
-        _$Ov = 5056;
-        _$Pv = 7616;
-        _$Gv = 7040;
-        _$Zv = 5120;
-        _$Ev = 7296;
-        _$_v = 7104;
-        _$Vv = 7168;
-        _$qv = 6464;
-        _$Hv = 7296;
-        _$xv = 7424;
-        _$Bv = 7744;
-        _$Xv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv];
-        _$dq = _$Xv;
-        for (_$Iq = 0; _$Iq < _$dq.length; _$Iq++) {
-            _$Qv = _$Mq;
-            _$Wv = _$dq;
-            _$Yv = _$Iq;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 6;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$Mq = _$Ev;
-        }
-        _$Qv = _$dq;
-        _$Wv = "push";
-        _$Yv = _$wq;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$dq = _$Ov;
+        _$uY = [];
         _$Qv = _$hq;
         _$Wv = _$Qv;
-        if (_$Wv) {
-            _$ks = _$cq;
-            _$Ns = _$Mq;
-            _$Hs = _$yq;
-            _$xs = _$ks[_$Ns](_$Hs);
-            _$Wv = !_$xs;
+        if (_$hq) {
+            _$Wv = !_$ks["hasOwnProperty"](_$yq);
         }
         _$hq = _$Wv;
-        _$Qv = "l0G";
-        _$Aq = _$Qv;
-        _$Wv = 1;
-        _$Sq = _$Wv;
-        _$Qv = _$Sq;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$Sq = _$Yv;
-        _$Qv = 1;
-        _$Aq = _$Qv;
-        _$Qv = "";
-        _$mq = _$Qv;
-        _$Qv = _$Sq;
-        _$Aq = _$Qv;
-        _$Qv = 1622016;
-        _$Wv = 1638400;
-        _$Yv = 1622016;
-        _$Ov = 1556480;
-        _$Pv = 1589248;
-        _$Gv = 1638400;
-        _$Zv = 1818624;
-        _$Ev = 1327104;
-        _$_v = 1835008;
-        _$Vv = 1818624;
-        _$qv = 1589248;
-        _$Hv = 1884160;
-        _$xv = 1802240;
-        _$Bv = 1671168;
-        _$Xv = 1589248;
-        _$Fv = 901120;
-        _$$v = 884736;
-        _$es = 1835008;
-        _$ts = 1671168;
-        _$ds = 1622016;
-        _$Ms = 1474560;
-        _$Is = 1245184;
-        _$As = 1785856;
-        _$Ss = 1622016;
-        _$Yn = 1671168;
-        _$Un = 1769472;
-        _$On = 1556480;
-        _$Pn = 1310720;
-        _$Gn = 1867776;
-        _$Nn = 1818624;
-        _$Zn = 1785856;
-        _$zn = 1720320;
-        _$En = 1884160;
-        _$Rn = 1654784;
-        _$_n = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv, _$Xv, _$Fv, _$$v, _$es, _$ts, _$ds, _$Ms, _$Is, _$As, _$Ss, _$Yn, _$Un, _$On, _$Pn, _$Gn, _$Nn, _$Zn, _$zn, _$En, _$Rn];
-        _$Sq = _$_n;
-        for (_$Tq = 0; _$Tq < _$Sq.length; _$Tq++) {
-            _$Qv = _$mq;
-            _$Wv = _$Sq;
-            _$Yv = _$Tq;
-            _$Ov = _$Wv[_$Yv];
-            _$Pv = 14;
-            _$Gv = _$Ov >> _$Pv;
-            _$Zv = String.fromCharCode(_$Gv);
-            _$Ev = _$Qv + _$Zv;
-            _$mq = _$Ev;
-        }
-        _$Qv = _$Sq;
-        _$Wv = "push";
-        _$Yv = _$Aq;
-        _$Ov = _$Qv[_$Wv](_$Yv);
-        _$Sq = _$Ov;
-        _$Qv = _$mq;
-        _$jq = _$Qv;
-        _$Wv = "Ql";
-        _$Cq = _$Wv;
-        _$Yv = 1;
-        _$Dq = _$Yv;
-        _$Qv = _$Dq;
-        _$Wv = 1;
-        _$Yv = _$Qv + _$Wv;
-        _$Dq = _$Yv;
-        _$Qv = 1;
-        _$Cq = _$Qv;
-        _$Qv = "";
-        _$Kq = _$Qv;
-        _$Qv = _$Dq;
-        _$Cq = _$Qv;
-        _$Qv = 425984;
-        _$Wv = 397312;
-        _$Yv = 471040;
-        _$Ov = 323584;
-        _$Pv = 487424;
-        _$Gv = 450560;
-        _$Zv = 327680;
-        _$Ev = 466944;
-        _$_v = 454656;
-        _$Vv = 458752;
-        _$qv = 413696;
-        _$Hv = 466944;
-        _$xv = 475136;
-        _$Bv = 495616;
-        _$Xv = [_$Qv, _$Wv, _$Yv, _$Ov, _$Pv, _$Gv, _$Zv, _$Ev, _$_v, _$Vv, _$qv, _$Hv, _$xv, _$Bv];
-        _$Dq = _$Xv;
-        _$Kq = "hasOwnProperty"
-        _$Dq = _$Dq["push"](_$Cq);
         _$Qv = _$hq;
         if (_$Qv) {
             _$Qv = !window["hasOwnProperty"]("cdc_adoQpoasnfa76pfcZLmcfl_Promise");
@@ -17840,15 +15088,9 @@ _$a = function () {
                 _$Ev = _$Yq;
                 _$_v = _$Zv + _$Ev;
                 _$Nq = _$_v;
-                _$Qv = _$uY;
-                _$Wv = "push";
-                _$Yv = _$Uq;
-                _$Ov = _$Nq;
-                _$Pv = _$Yv | _$Ov;
-                _$Qv[_$Wv](_$Pv);
+                _$uY["push"](_$Uq | _$Nq);
             }
         }
-        _$Qv = _$hq;
         if (!_$hq) {
             for (_$Wq = 0; _$Wq < 5; _$Wq++) {
                 _$Qv = 18;
@@ -17924,16 +15166,9 @@ _$a = function () {
                 _$Ev = _$Zq;
                 _$_v = _$Zv + _$Ev;
                 _$Lq = _$_v;
-                _$Qv = _$uY;
-                _$Wv = "push";
-                _$Yv = _$zq;
-                _$Ov = _$Lq;
-                _$Pv = _$Yv | _$Ov;
-                _$Qv[_$Wv](_$Pv);
+                _$uY["push"](_$zq | _$Lq);
             }
         }
-        console.log("_$yY: _$OY: ", _$OY);
-        console.log("_$yY: _$IY: ", _$IY);
         _$yY = _$OY.concat(_$IY.slice(0, 6));
         _$qq = _$wY;
         _$Hq = 0;
@@ -17942,6 +15177,7 @@ _$a = function () {
         }
         _$Pv = _$qq++;
         _$yY["push"](_$Hq ^ _$MY[_$Pv]);
+        ("_$yY: ", _$yY);
         _$Hq = 0;
         for (_$Vq = 0; _$Vq < 5; _$Vq++) {
             _$Hq += _$GW[_$Vq];
@@ -17954,7 +15190,7 @@ _$a = function () {
         }
         _$Pv = _$qq++;
         _$yY["push"](_$Hq ^ _$MY[_$Pv]);
-        console.log("_$yY: ", _$yY);
+        ("_$yY: ", _$yY);
         _$Qv = "rp2";
         _$xq = "rp2";
         _$Wv = 1;
@@ -18238,35 +15474,7 @@ _$a = function () {
             _$Gv = _$aH[2] < 20;
         }
         if (_$Gv) {
-            _$Qv = "fÍÑ×æ";
-            _$dH = _$Qv;
-            _$Wv = _$dH;
-            _$Yv = "charCodeAt";
-            _$Ov = 0;
-            _$Pv = _$Wv[_$Yv](_$Ov);
-            _$Gv = _$dH;
-            _$Zv = "length";
-            _$Ev = _$Gv[_$Zv];
-            _$_v = _$Pv - _$Ev;
-            _$Vv = String.fromCharCode(_$_v);
-            _$MH = _$Vv;
-            for (_$IH = 1; _$IH < _$dH.length; _$IH++) {
-                _$Qv = _$dH;
-                _$Wv = "charCodeAt";
-                _$Yv = _$IH;
-                _$Ov = _$Qv[_$Wv](_$Yv);
-                _$Pv = _$MH;
-                _$Gv = "charCodeAt";
-                _$Zv = _$IH;
-                _$Ev = 1;
-                _$_v = _$Zv - _$Ev;
-                _$Vv = _$Pv[_$Gv](_$_v);
-                _$qv = _$Ov - _$Vv;
-                _$Hv = String.fromCharCode(_$qv);
-                _$MH += _$Hv;
-            }
-            _$Qv = _$MH;
-            _$Jq = _$Qv;
+            _$Jq = "alert";
         }
         if (_$eH["length"] > 10) {
             _$$q = _$rH[_$Jq];
@@ -18274,8 +15482,7 @@ _$a = function () {
         if (_$$q) {
             _$Pv = _$qq++;
             _$yY["push"](23 ^ _$MY[_$Pv]);
-        }
-        if (!_$$q) {
+        }else {
             _$Pv = _$qq++;
             _$yY["push"](94 ^ _$MY[_$Pv]);
         }
@@ -18283,8 +15490,6 @@ _$a = function () {
         _$TH = _$yY["length"] - 1;
         _$jH = [];
         _$UW = [];
-        console.log("_$LY: ", JSON.stringify(_$LY));
-        console.log("_$yY: ", JSON.stringify(_$yY));
         /// yY依赖于  {_$OY, _$IY, _$MY, _$rY, _$uY, _$GW}
         for (_$CH = 0; _$CH <= _$mH; _$CH++) {
             _$UW["push"](_$LY[_$CH]);
@@ -18319,7 +15524,6 @@ _$a = function () {
                 }
             }
         }
-        console.log("_$UW: ", JSON.stringify(_$UW));
         _$Qv = 2;
         _$Wv = 1;
         _$Yv = 5;
@@ -26239,6 +23443,8 @@ _$a = function () {
     }
 
     function _$oU() {
+        // 检测有没有=module
+        "=module";
         var _$b, _$l, _$h, _$g, _$u, _$p, _$y, _$w, _$d, _$M, _$I, _$A, _$S, _$m, _$T, _$j, _$C, _$D, _$K, _$Q, _$W,
             _$Y, _$U, _$O, _$P, _$G, _$N, _$Z, _$z, _$E, _$R, _$_, _$L, _$V, _$q, _$H, _$x, _$B, _$X, _$F, _$J, _$$,
             _$aa, _$ea, _$ra, _$ca, _$va, _$sa, _$na, _$fa, _$ta, _$ia, _$oa, _$ka, _$ba, _$la, _$ha, _$ga, _$ua, _$pa,
@@ -28514,7 +25720,7 @@ _$a = function () {
             _$Ur = _$te;
         }
         _$OW = _$r / 2 / 3 >>> 3;
-        console.log("init OW: ", _$OW, " _$r: ", _$r);
+        ("init OW: ", _$OW, " _$r: ", _$r);
         _$sc = [];
         for (_$iv = 0; _$iv < _$a.length; _$iv++) {
             _$te = _$sc;
@@ -29823,10 +27029,9 @@ _$a = function () {
         _$O = _$nU(_$U, randomStrKey);
 
         _$SU(170, _$O, randomStrKey, this['_$1'], startTime);
-        console.log("_$pW: ", _$pW);
         window["ABC"]["prototype"]["t"] = new Date()["getTime"]() - startTime;
-        console.log(JSON.stringify(_$YW));
-        return _$SU(319, _$YW).slice(8, 125);
+        let result = _$SU(319, _$YW).slice(8, 125);
+        return result;
     }
 
     function _$AU() {
@@ -31393,7 +28598,7 @@ _$a = function () {
             }
             _$Tf = _$UW;
             _$jf = _$JW;
-            console.log("_$Tf: ", JSON.stringify(_$Tf));
+            ("_$Tf: ", JSON.stringify(_$Tf));
             _$Cf = _$_W;
             _$Df = "Pkx";
             _$Kf = 1;
@@ -31494,12 +28699,10 @@ _$a = function () {
             }
             _$mf = _$mf.push(_$Sf);
             _$ye = typeof _$ZW[_$Tt] === _$yc;
-            console.log("_$jf: ", JSON.stringify(_$jf));
             for (_$ic = 0; _$ic < _$jf.length; _$ic++) {
                 _$Ue = _$jf[_$ic];
                 _$rr["push"](_$Ue);
             }
-            console.log("_$rr: ", JSON.stringify(_$rr));
             // _$ar = " ocM" + "O?[u(" + "k=!A" + "[gCX" + 'wlZ6l"' + "P\\;U|@" + "dXQpK" + ";xb+" + "qj_*" + "10mE0_" + "`v@3)" + ",4.J" + '"KR,$(' + "Dh!p" + "&}j{" + "&$%V" + "~WO%qs" + ":#exY" + "N^>'" + "I)2B" + "aMbyw9" + "yst." + "IT38G" + "4U=u~d" + "FZr1r" + "f+9F8{" + " #A'" + "kf]-/" + "n<*567" + "|H:2<>" + "7BcDEH" + "JTL`NP" + "Q/RSzV" + "tWYim" + "\\]^S" + "e5GLg" + "i-nho" + "a?vz" + "C}";
             _$ar = ' ocMO?[u(k=!A[gCXwlZ6l"P\\;U|@dXQpK;xb+qj_*10mE0_`v@3),4.J"KR,$(Dh!p&}j{&$%V~WO%qs:#exYN^>\'I)2BaMbyw9yst.IT38G4U=u~dFZr1rf+9F8{ #A\'kf]-/n<*567|H:2<>7BcDEHJTL`NPQ/RSzVtWYim\\]^Se5GLgi-nhoa?vzC}'
             _$er = 1;
@@ -31703,8 +28906,6 @@ _$a = function () {
             _$De = [];
             _$mt = _$mt * _$St[6];
             _$Bf = [];
-            // console.log("_$Cf: ", JSON.stringify(_$Cf));
-            // console.log("_$bc: ", JSON.stringify(_$bc));
             for (_$ic = 0; _$ic < _$bc.length; _$ic++) {
                 _$Ue = _$Cf[_$ic];
                 _$Ge = _$bc[_$ic];
@@ -31766,10 +28967,6 @@ _$a = function () {
                 _$p = _$De["length"];
                 _$y = 0;
                 _$w = _$p === _$y;
-                console.log("_$Bf: ", JSON.stringify(_$Bf));
-                console.log("_$rr: ", JSON.stringify(_$rr));
-                console.log("_$LY: ", JSON.stringify(_$LY));
-                console.log("_$yY: ", JSON.stringify(_$yY));
                 if (_$w) {
                     for (_$U = 0; _$U < _$rr.length; _$U++) {
                         _$O = _$U % _$Bf["length"];
@@ -32417,7 +29614,6 @@ _$a = function () {
                         }
                     }
                 }
-                console.log("_$De: ",  JSON.stringify(_$De));
                 _$aY = _$De;
             };
             _$lc(_$Ae, 0);
@@ -32743,8 +29939,6 @@ _$a = function () {
                 }
             }
             _$at = "";
-            console.log("_$aY: ", JSON.stringify(_$aY));
-            console.log("_$MY: ", JSON.stringify(_$MY));
             for (_$Be = 0, _$Xe = _$aY.length; _$Be < _$Xe; _$Be++) {
                 _$at += String.fromCharCode(_$aY[_$Be]);
             }
@@ -32790,7 +29984,6 @@ _$a = function () {
                 _$ue = "v";
                 _$At = _$ue;
             }
-            console.log("_$Uf: ", _$Uf);
             while (_$It < _$Uf.length) {
                 _$ue = _$Uf;
                 _$Qe = "charCodeAt";
@@ -32870,7 +30063,6 @@ _$a = function () {
                 _$Vr = _$Rf;
                 _$qr = _$_r[_$Lr](_$Vr);
                 _$Hr = _$Rr + _$qr;
-                // console.log("_$Hr: ", _$Hr);
                 _$Of = _$Hr;
             }
             _$Jr = "ÞZ[H" + "IFGqr" + "" + " õÕ" + "¤¥" + "^_s" + "t`aQ" + "RZ[" + "±²" + "®¯uv¶" + "·¨©qr¤" + "¥®¯_" + "`{|´µª" + "«v" + "wlm«¬" + " ¹º¬" + "­°±" + "" + "{|" + "°±°±" + "ÍÎ¡¢" + "" + "}~ÅÆ" + " ¬­¤" + "¥©ª" + "}~" + "" + "¤¥ÙÚ­" + "®ÄÅÇÈ»" + "¼¥¦" + "ÂÃ" + "°±°±¹º" + "¤¥éê" + "ìíßàÉÊ" + "¹ºáâÓÔ" + "ÍÎÕ" + "ÖÕÖÍ" + "Î²³¢";
@@ -33015,7 +30207,7 @@ _$a = function () {
             }
             _$mt = _$mt / _$St[8];
             _$Jv = _$jc + "e" + _$Of;
-            _$$v = debugArray;
+            _$$v = [];
             for (_$Ct = 0, _$Dt = _$Jv.length; _$Ct < _$Dt; _$Ct++) {
                 _$ue = _$$v;
                 _$Qe = "push";
@@ -33025,7 +30217,6 @@ _$a = function () {
                 _$Oe = _$We[_$Ye](_$Ue);
                 _$ue[_$Qe](_$Oe);
             }
-            console.log("_$YW = 3");
             _$YW = _$$v;
             for (_$nc = _$rs - 1; _$nc >= 0; _$nc--) {
                 for (_$fc = _$df - 1; _$fc >= 0; _$fc--) {
@@ -43211,7 +40402,7 @@ _$a = function () {
                     _$eQ["push"](_$MD["charCodeAt"](_$Vp));
                 }
                 console.log("_$yD: ", _$yD);
-                console.log("_$dD: ", _$dD);
+                // console.log("_$dD: ", _$dD);
                 _$aY = _$eQ;
                 _$rK = [[5, 4], [6, 4], [6, 7], [2, 3]];
                 _$cK = _$wW;
@@ -45672,13 +42863,13 @@ _$a = function () {
             }
         }
     }
-};
-_$a();
+}();
 
-window.ts = 1661986251253;
-let result = new window["ABC"]().z("YtNMIT/vOuJkScU6ZqG+zY3tfyyrHuzHO4glJQaz/OU=", ts);
-console.log("result: ", result === "vej96Xl45RH13BX16Tl4ib3o/el5eOUR9dwV9ek5eIm96P3peXjlEfXcFBWN+bjspOA9FGUdbUiwpcRgVMiFSH2UUWQc7RTJYL11HAU1bNXx7KXJUT0IP", result);
 
+function getEncrypted(ts){
+    ts = ts || Date.now();
+    return new window["ABC"]().z("YtNMIT/vOuJkScU6ZqG+zY3tfyyrHuzHO4glJQaz/OU=", ts)
+}
 var call = function (page) {
     $["ajax"]({
         url: "https://match2023.yuanrenxue.cn/api/match2023/4",
@@ -45713,3 +42904,5 @@ var call = function (page) {
 if (typeof global === "undefined" && document.URL.includes("match")) {
     call(1);
 }
+
+console.log(getEncrypted());

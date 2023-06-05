@@ -101,4 +101,60 @@ class Spider(object):
         print(sum(nums))
 
 
-Spider().main()
+# Spider().main()
+
+import requests
+
+
+headers = {
+    "Accept": "*/*",
+    "Accept-Language": "zh-CN,zh;q=0.9",
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+    "Pragma": "no-cache",
+    "Referer": "https://zb.oschina.net/projects/list.html",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+    "X-Requested-With": "XMLHttpRequest",
+    "sec-ch-ua": "\"Google Chrome\";v=\"113\", \"Chromium\";v=\"113\", \"Not-A.Brand\";v=\"24\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\""
+}
+cookies = {
+    "Hm_lvt_fff1476d9c6a8ebdcaeefc516105e869": "1685317537",
+    "_gid": "GA1.2.931357752.1685317538",
+    "JSESSIONID": "47A6C7244D9A539900B3FE5A7F950150",
+    "qimo_seosource_0": "%E5%85%B6%E4%BB%96%E7%BD%91%E7%AB%99",
+    "qimo_seokeywords_0": "%E6%9C%AA%E7%9F%A5",
+    "uuid_8387c580-a888-11e5-bc38-bb63a4ea0854": "8f452137-ef69-40fb-bd14-a8489afc3929",
+    "qimo_seosource_8387c580-a888-11e5-bc38-bb63a4ea0854": "%E5%85%B6%E4%BB%96%E7%BD%91%E7%AB%99",
+    "qimo_seokeywords_8387c580-a888-11e5-bc38-bb63a4ea0854": "%E6%9C%AA%E7%9F%A5",
+    "qimo_xstKeywords_8387c580-a888-11e5-bc38-bb63a4ea0854": "",
+    "href": "https%3A%2F%2Fzb.oschina.net%2F",
+    "accessId": "8387c580-a888-11e5-bc38-bb63a4ea0854",
+    "oscid": "4IAAEtVzQuvo1t8%2B58AqQz4W3DRCq9kgGERJ9JBTT4dMYciUL124d6bpUIBDyKLNHhueKRv1Tyi7P9A6nj7tGSmBrpF7syfZOEKG%2Fd%2FAeLav5WY1zXU45VOGSXiRQ61A17YRbHJVTLg%3D",
+    "im-uid": "user-528908",
+    "im-sdktoken": "null",
+    "pageViewNum": "8",
+    "Hm_lpvt_fff1476d9c6a8ebdcaeefc516105e869": "1685317735",
+    "_ga_77PRQPDK9K": "GS1.1.1685317537.1.1.1685317735.0.0.0",
+    "_ga": "GA1.2.1425131367.1685317538",
+    "_gat_gtag_UA_131295055_1": "1"
+}
+url = "https://zb.oschina.net/project/contractor-browse-project-and-reward"
+params = {
+    "applicationAreas": "",
+    "type": "1",
+    "moneyMinByYuan": "",
+    "moneyMaxByYuan": "",
+    "sortBy": "30",
+    "currentTime": "",
+    "pageSize": "20",
+    "currentPage": "1"
+}
+response = requests.get(url, headers=headers,  params=params)
+
+print(response.text)
+print(response)

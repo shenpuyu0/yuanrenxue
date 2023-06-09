@@ -91,8 +91,6 @@ class Spider(object):
             "http": proxy,
             "https": proxy,
         }
-        # self.session.cookies.update({"sessionid": "jahgp7v6tnppod5dkkp00xzyhlzlydsd"})
-        # 获取sessionid
         self.index()
         for page in range(1, 6):
             # 每次请求最少请求一次图片地址
@@ -103,10 +101,6 @@ class Spider(object):
                 "token": self.js.call("getEncrypted", ts, page)
             }
             print(payload)
-            # TODO 检测TLS就很烦，浏览器能过，但代码不行
-            # response = requests.post("http://10.0.15.108:9998/service/tlsProxy"
-            #                          , json={"method": "POST", "url": url, "headers": self.headers,
-            #                                  "cookies": self.cookies, "proxies": proxy})
             response = self.session.post(url, headers=self.headers, data=payload)
             self.cookies.update(response.cookies.get_dict())
             data = response.json()

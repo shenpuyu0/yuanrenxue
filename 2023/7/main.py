@@ -14,6 +14,8 @@ import tls_client
 
 proxy = "http://lixiaosong.letsflytech.com:2dkx8h@gate2.proxyfuel.com:2000"
 proxy = "http://127.0.0.1:8888"
+
+
 class Spider(object):
     def __init__(self):
         # Cookie需要传入sessionId
@@ -25,12 +27,11 @@ class Spider(object):
             "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
             "origin": "https://match2023.yuanrenxue.cn",
             "pragma": "no-cache",
-            "referer": "https://match2023.yuanrenxue.cn/topic/4",
+            "referer": "https://match2023.yuanrenxue.cn/topic",
             "sec-ch-ua": "\"Google Chrome\";v=\"113\", \"Chromium\";v=\"113\", \"Not-A.Brand\";v=\"24\"",
             "sec-ch-ua-mobile": "?0",
             "sec-ch-ua-platform": "\"Windows\"",
             "sec-fetch-dest": "empty",
-            "Cookie": "Hm_lvt_2a795944b81b391f12d70da5971ba616=1684918579; sessionid=d16u8hrgryjl591med8otgfy3ewov6ml; Hm_lpvt_2a795944b81b391f12d70da5971ba616=1685410554",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
@@ -56,9 +57,10 @@ class Spider(object):
             "upgrade-insecure-requests": "1",
             "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
         }
-        url = "https://match2023.yuanrenxue.cn/topic/4"
-        response = requests.post("http://10.0.15.108:9998/service/tlsProxy", json={"method":"GET", "url":url, "headers":headers, "cookies": self.cookies, "proxies":proxy})
+        url = "https://match2023.yuanrenxue.cn/topic/7"
+        response= self.session.get(url, headers=headers)
         print(response.cookies.get_dict())
+
     def png(self):
         headers = {
             "authority": "match2023.yuanrenxue.cn",
@@ -76,31 +78,70 @@ class Spider(object):
             "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
         }
         url = "https://match2023.yuanrenxue.cn/api/background.png"
-        response = self.session.get(url, headers=self.headers)
+        response = self.session.get(url, headers=headers)
 
         return response.text
+
     def main(self):
         self.cookies = {}
-        url = "https://match2023.yuanrenxue.cn/api/match2023/4"
+        url = "https://match2023.yuanrenxue.cn/api/match2023/7"
         nums = []
-        self.session = tls_client.Session(client_identifier="chrome_106")
+        self.session = tls_client.Session(client_identifier="chrome_113")
         self.session.proxies = {
             "http": proxy,
             "https": proxy,
         }
-
+        # self.session.cookies.update({"sessionid": "jahgp7v6tnppod5dkkp00xzyhlzlydsd"})
+        # 获取sessionid
+        self.index()
         for page in range(1, 6):
             # 每次请求最少请求一次图片地址
-            self.png()
-            data = {"page": str(page),"yt4": self.js.call("getEncrypted")}
-            print(data)
+            ts = self.png()
+            payload = {
+                "page": str(page),
+                "t": str(ts),
+                "token": self.js.call("getEncrypted", ts, page)
+            }
+            print(payload)
             # TODO 检测TLS就很烦，浏览器能过，但代码不行
-            response = self.session.post(url, headers=self.headers, data=data)
+            # response = requests.post("http://10.0.15.108:9998/service/tlsProxy"
+            #                          , json={"method": "POST", "url": url, "headers": self.headers,
+            #                                  "cookies": self.cookies, "proxies": proxy})
+            response = self.session.post(url, headers=self.headers, data=payload)
             self.cookies.update(response.cookies.get_dict())
             data = response.json()
             print(data)
             nums.extend([dic["value"] for dic in data["data"]])
         print(sum(nums))
+    #
+    # headers = {
+    #     "Host": "match2023.yuanrenxue.cn",
+    #     "pragma": "no-cache",
+    #     "cache-control": "no-cache",
+    #     "sec-ch-ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"Google Chrome\";v=\"114\"",
+    #     "accept": "application/json, text/javascript, */*; q=0.01",
+    #     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    #     "x-requested-with": "XMLHttpRequest",
+    #     "sec-ch-ua-mobile": "?0",
+    #     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    #     "sec-ch-ua-platform": "\"macOS\"",
+    #     "origin": "https://match2023.yuanrenxue.cn",
+    #     "sec-fetch-site": "same-origin",
+    #     "sec-fetch-mode": "cors",
+    #     "sec-fetch-dest": "empty",
+    #     "referer": "https://match2023.yuanrenxue.cn/topic/7",
+    #     "accept-language": "zh-CN,zh;q=0.9"
+    # }
+    # url = "https://match2023.yuanrenxue.cn/api/match2023/7"
+    # data = {
+    #     "page": "1",
+    #     "t": "1686211389720",
+    #     "token": "b577f3d75fcf67a71917552748f9e080"
+    # }
+    # response = requests.post(url, headers=headers, data=data)
+    #
+    # print(response.text)
+    # print(response)
 
 
 Spider().main()

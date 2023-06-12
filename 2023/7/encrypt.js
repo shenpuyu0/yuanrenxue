@@ -148,7 +148,7 @@ function parseResponse(data) {
 function replaceAllHtml(html) {
     html = html.replaceAll("img_number ", "");
     for (const num in replaceMap) {
-        html = html.replaceAll('src="' + replaceMap[num] + '"', "value=" + num)
+        html = html.replaceAll('src="' + num + '"', "value=" + replaceMap[num])
     }
     return html
 }

@@ -115,6 +115,7 @@ function hex_sha256(e, k, j) {
     return binl2hex(core_hsha(str2binl(ckq(e, k)), j ? 216 : 248));
 }
 
+hex_sha256(Date.now() + "")
 
 function getEncrypted(key, j_key, style) {
     return style ? hex_sha256(key, j_key, style) : hex_sha256(key + "" + j_key);
